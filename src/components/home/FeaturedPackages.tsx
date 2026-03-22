@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ShoppingCart, Plane, Hotel, Car } from 'lucide-react'
+import { ShoppingCart, Plane, Hotel, Car, Users } from 'lucide-react'
 import { packageService } from '@/services'
 import { resolveMediaUrl } from '@/config/env'
 import type { Package } from '@/types'
@@ -55,8 +55,70 @@ export default function FeaturedPackages() {
   }, [])
 
   return (
-    /* Full-bleed section — NO max-width container, violet/purple gradient */
-    <section className="w-full bg-gradient-to-r from-[#7854F6] via-[#7854F6] to-[#8166F1]">
+    <>
+    {/* ── MOBILE VERSION ─────────────────────────────────── */}
+    <section className="md:hidden py-6 px-4 bg-white">
+      <h2 className="text-lg font-bold text-gray-800 text-center mb-4">
+        Los Mejores Paquetes Turísticos Para Isla Margarita
+      </h2>
+
+      {/* Package card */}
+      <div className="rounded-2xl shadow-md overflow-hidden mb-4">
+        {/* Image */}
+        <div className="relative aspect-video w-full">
+          <Image
+            src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=600&q=80"
+            alt="Margarita 360°"
+            fill
+            className="object-cover"
+            unoptimized
+          />
+          {/* Duration badge */}
+          <div className="absolute top-3 left-3">
+            <span className="bg-gradient-to-r from-[#FE6604] via-[#FB9141] to-[#F59C0B] text-white text-xs font-bold px-3 py-1 rounded-full">
+              5 días / 4 noches
+            </span>
+          </div>
+        </div>
+
+        {/* Card body */}
+        <div className="bg-white p-4">
+          <h3 className="font-bold text-base text-gray-900 mb-2">MARGARITA 360°</h3>
+
+          <div className="flex items-center gap-1 text-sm text-gray-600 mb-2">
+            <Users className="w-4 h-4 text-gray-400" />
+            <span>2 Adultos</span>
+          </div>
+
+          <p className="text-xs text-gray-500 mb-1">
+            ✈️ Boletos aéreos Caracas-Porlamar
+          </p>
+          <p className="text-xs text-gray-500 mb-3">
+            🏝️ Full Day a la Isla de Cubagua + 2 noches en la Isla de Coche
+          </p>
+
+          <Link href="/paquetes" className="text-[#FE6604] text-sm font-medium block mb-2">
+            Ver detalles
+          </Link>
+
+          <p className="font-semibold text-sm text-gray-800">
+            Total a pagar para 2 Adultos $670
+          </p>
+        </div>
+      </div>
+
+      {/* CTA button */}
+      <Link
+        href="/paquetes"
+        className="block w-full text-center bg-gradient-to-r from-[#FE6604] via-[#FB9141] to-[#F59C0B] text-white font-semibold py-3 rounded-full text-sm shadow"
+      >
+        Ver todos los paquetes
+      </Link>
+    </section>
+
+    {/* ── DESKTOP VERSION ─────────────────────────────────── */}
+    {/* Full-bleed section — NO max-width container, violet/purple gradient */}
+    <section className="hidden md:block w-full bg-gradient-to-r from-[#7854F6] via-[#7854F6] to-[#8166F1]">
       <div className="flex flex-col md:flex-row min-h-[420px]">
 
         {/* LEFT PANEL — ~30% width, dark purple */}
@@ -147,5 +209,6 @@ export default function FeaturedPackages() {
         </div>
       </div>
     </section>
+    </>
   )
 }

@@ -4,6 +4,7 @@ import './globals.css'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import WhatsAppButton from '@/components/WhatsAppButton'
+import MobileScrollNav from '@/components/MobileScrollNav'
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -32,9 +33,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="es">
       <body className={`${poppins.variable} font-sans antialiased`}>
         <Navbar />
-        <main>{children}</main>
-        <Footer />
+        <main className="pb-16 md:pb-0">{children}</main>
+        <div className="hidden md:block">
+          <Footer />
+        </div>
         <WhatsAppButton />
+        <MobileScrollNav />
       </body>
     </html>
   )

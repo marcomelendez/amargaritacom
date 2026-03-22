@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { MapPin, Star } from 'lucide-react'
+import { MapPin, Star, Heart, ChevronLeft, ChevronRight, PawPrint } from 'lucide-react'
 import { hotelService } from '@/services'
 import { resolveMediaUrl } from '@/config/env'
 import type { Hotel } from '@/types'
@@ -34,7 +34,103 @@ export default function FeaturedHotels() {
   }, [])
 
   return (
-    <section className="py-16 bg-white">
+    <>
+    {/* ── MOBILE VERSION ─────────────────────────────────── */}
+    <section className="md:hidden bg-white">
+      {/* Heading */}
+      <div className="py-4 px-4">
+        <h2 className="text-lg font-bold text-gray-800 leading-snug">
+          <span className="text-gray-800">TOP DE </span>
+          <span className="text-[#7854F6]">HOTELES DESTACADOS</span>
+          <span className="text-gray-800"> EN LA ISLA DE MARGARITA</span>
+        </h2>
+      </div>
+
+      {/* Hotel card */}
+      <div className="mx-4 mb-6">
+        <div className="relative rounded-xl overflow-hidden">
+          <div className="relative aspect-video w-full">
+            <Image
+              src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&q=80"
+              alt="Margarita Village"
+              fill
+              className="object-cover"
+              unoptimized
+            />
+          </div>
+
+          {/* Top-left badge */}
+          <div className="absolute top-3 left-3">
+            <span className="bg-gradient-to-r from-[#FE6604] via-[#FB9141] to-[#F59C0B] text-white text-xs font-bold px-3 py-1 rounded-full">
+              TODO INCLUIDO
+            </span>
+          </div>
+
+          {/* Top-right heart */}
+          <button className="absolute top-3 right-3 p-1.5 bg-white/20 backdrop-blur-sm rounded-full">
+            <Heart className="w-5 h-5 text-white" />
+          </button>
+
+          {/* Bottom center: Detalles button */}
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2">
+            <Link
+              href="/hoteles"
+              className="bg-[#7854F6] text-white text-sm font-semibold px-5 py-1.5 rounded-full"
+            >
+              Detalles
+            </Link>
+          </div>
+
+          {/* Left arrow */}
+          <button className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/80 rounded-full flex items-center justify-center shadow">
+            <ChevronLeft className="w-5 h-5 text-gray-700" />
+          </button>
+
+          {/* Right arrow */}
+          <button className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/80 rounded-full flex items-center justify-center shadow">
+            <ChevronRight className="w-5 h-5 text-gray-700" />
+          </button>
+        </div>
+
+        {/* Card info below image */}
+        <div className="pt-3 pb-4">
+          <h3 className="font-bold text-gray-900 text-base uppercase mb-1">
+            MARGARITA VILLAGE
+          </h3>
+
+          {/* Stars */}
+          <div className="flex items-center gap-0.5 mb-2">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star
+                key={i}
+                className={`w-4 h-4 ${i < 3 ? 'text-orange-400 fill-orange-400' : 'text-gray-300 fill-gray-300'}`}
+              />
+            ))}
+          </div>
+
+          {/* Location */}
+          <div className="flex items-center gap-1 text-sm text-gray-600 mb-1">
+            <MapPin className="w-4 h-4 text-gray-400 shrink-0" />
+            <span>Porlamar Calle Miragua</span>
+          </div>
+
+          {/* Pets */}
+          <div className="flex items-center gap-1 text-sm text-gray-600 mb-2">
+            <PawPrint className="w-4 h-4 text-gray-400 shrink-0" />
+            <span>Se permiten mascotas</span>
+          </div>
+
+          {/* Price */}
+          <div className="flex items-baseline gap-1">
+            <span className="text-2xl font-bold text-[#FE6604]">$50</span>
+            <span className="text-xs text-gray-500 ml-1">Por noche/ per persona</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {/* ── DESKTOP VERSION ─────────────────────────────────── */}
+    <section className="hidden md:block py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4">
         {/* Intro paragraph */}
         <p className="text-gray-500 text-sm leading-relaxed mb-10 max-w-3xl">
@@ -96,5 +192,6 @@ export default function FeaturedHotels() {
         </div>
       </div>
     </section>
+    </>
   )
 }

@@ -6,7 +6,7 @@ import { MessageCircle } from 'lucide-react'
 
 export default function HeroSection() {
   return (
-    <section className="relative w-full h-[80vh] min-h-[520px] mt-[88px]">
+    <section className="relative w-full h-[80vh] min-h-[520px] mt-0 md:mt-[88px]">
       {/* Background image */}
       <Image
         src="/hero-bg-img.jpg"

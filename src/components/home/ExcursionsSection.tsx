@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Mountain, Sun, Landmark } from 'lucide-react'
+import { Mountain, Sun, Landmark, Star } from 'lucide-react'
 import { excursionService } from '@/services'
 import { resolveMediaUrl } from '@/config/env'
 import type { Excursion } from '@/types'
@@ -37,7 +37,46 @@ export default function ExcursionsSection() {
   }, [])
 
   return (
-    <section className="py-16 bg-white">
+    <>
+    {/* ── MOBILE VERSION ─────────────────────────────────── */}
+    <section className="md:hidden py-6 px-4 bg-white">
+      <h2 className="text-xl font-bold text-gray-800 text-center mb-3">
+        Paseos y Excursiones
+      </h2>
+      <p className="text-sm text-gray-600 text-center mb-6">
+        Te llevamos a los lugares más hermosos para visitar en la Isla de Margarita y con ayuda de nuestros aliados tenemos para tí los mejores paseos y excursiones! Margarita es más que playa, sol y arena
+      </p>
+
+      {/* Circular card */}
+      <div className="flex flex-col items-center">
+        <div className="relative w-48 h-48 rounded-full overflow-hidden shadow-lg mx-auto">
+          <Image
+            src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400&q=80"
+            alt="Full Day I Love Cubagua"
+            fill
+            className="object-cover"
+            unoptimized
+          />
+        </div>
+
+        <h3 className="font-bold text-base text-gray-900 text-center mt-4">
+          Full Day I Love Cubagua
+        </h3>
+
+        {/* Stars row */}
+        <div className="flex items-center justify-center gap-1 mt-1">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Star key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+          ))}
+          <span className="text-sm font-bold text-gray-700 ml-1">4.7</span>
+          <span className="text-sm text-gray-500">· Excellent</span>
+          <span className="text-sm text-gray-400 font-medium ml-1">Google</span>
+        </div>
+      </div>
+    </section>
+
+    {/* ── DESKTOP VERSION ─────────────────────────────────── */}
+    <section className="hidden md:block py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <h2 className="text-3xl font-bold text-gray-800 mb-2">Paseos y Excursiones</h2>
@@ -104,5 +143,6 @@ export default function ExcursionsSection() {
         </div>
       </div>
     </section>
+    </>
   )
 }
