@@ -9,14 +9,12 @@ export default function HeroSection() {
     <section className="relative w-full h-[80vh] min-h-[520px] mt-[88px]">
       {/* Background image */}
       <Image
-        src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80"
+        src="/hero-bg-img.jpg"
         alt="Isla Margarita, Venezuela"
         fill
-        className="object-cover"
+        className="object-cover object-center"
         priority
-        onError={(e) => {
-          (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80'
-        }}
+        unoptimized
       />
 
       {/* Dark gradient overlay */}
@@ -37,16 +35,9 @@ export default function HeroSection() {
 
       {/* Centered content */}
       <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4">
-        {/* A circle */}
-        <div className="mb-3">
-          <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/50 shadow-lg">
-            <span className="text-5xl font-black text-white drop-shadow">A</span>
-          </div>
-        </div>
-
-        {/* Logo text */}
-        <div className="text-xl font-bold mb-5 tracking-wide drop-shadow">
-          Margarita.com
+        {/* Logo */}
+        <div className="mb-6">
+          <Image src="/logo-white-center.png" alt="Amargarita.com" width={280} height={180} className="drop-shadow-2xl" unoptimized priority />
         </div>
 
         {/* H1 */}

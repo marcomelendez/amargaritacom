@@ -29,10 +29,10 @@ export default function NewsletterSection() {
 
   return (
     <div className="py-14 text-center">
-      <h2 className="text-3xl md:text-4xl font-bold text-white mb-3">
+      <h2 className="text-3xl md:text-4xl font-bold text-black mb-3">
         Ahorra tiempo y dinero!
       </h2>
-      <p className="text-[#8BA4E6]/70 mb-8 text-base">
+      <p className="text-black/70 mb-8 text-base">
         Registrate para que conozcas las mejores ofertas
       </p>
 

@@ -60,7 +60,7 @@ export default function FeaturedPackages() {
       <div className="flex flex-col md:flex-row min-h-[420px]">
 
         {/* LEFT PANEL — ~30% width, dark purple */}
-        <div className="relative md:w-[30%] bg-[#7854F6]/25 rounded-l-none md:rounded-l-3xl flex flex-col justify-center px-8 py-10 md:py-12 overflow-hidden">
+        <div className="relative md:w-[30%] bg-[#4a43c4] rounded-l-none md:rounded-l-3xl flex flex-col justify-center px-8 py-10 md:py-12 overflow-hidden">
           {/* Watermark */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
             <Image src="/m-logo.png" alt="" width={320} height={320} className="opacity-[0.06] w-4/5 h-auto object-contain" unoptimized />
@@ -73,7 +73,7 @@ export default function FeaturedPackages() {
           </p>
           <Link
             href="/paquetes"
-            className="inline-block bg-gradient-to-r from-[#FE6604] via-[#FB9141] to-[#F59C0B] hover:opacity-90 text-white font-semibold px-6 py-3 rounded-full text-center transition-all hover:scale-105 shadow-md w-fit"
+            className="inline-block bg-[#FE6404] hover:bg-[#FB9141] text-white font-semibold px-6 py-3 rounded-full text-center transition-all hover:scale-105 shadow-md w-fit"
           >
             Ver Todos
           </Link>

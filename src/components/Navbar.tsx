@@ -71,10 +71,8 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <span className="text-2xl font-bold tracking-tight">
-              <span className="bg-gradient-to-r from-[#FE6604] via-[#FB9141] to-[#F59C0B] bg-clip-text text-transparent">a</span>
-              <span className="text-gray-800">margarita</span>
-              <span className="text-gray-400">.com</span>
+            <span className="text-[1.65rem] font-bold tracking-tight text-[#FE6404]">
+              amargarita.com
             </span>
           </Link>
 

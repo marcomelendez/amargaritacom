@@ -67,7 +67,7 @@ export default function FeaturedHotels() {
                   <h3 className="font-semibold text-gray-800 leading-tight text-base">{hotel.name}</h3>
                   <Link
                     href={`/hoteles/${hotel.slug}`}
-                    className="shrink-0 bg-[#7854F6] text-white text-xs font-medium px-3 py-1.5 rounded-full hover:bg-[#7854F6] transition-colors"
+                    className="shrink-0 bg-[#4a43c4] text-white text-xs font-medium px-3 py-1.5 rounded-full hover:bg-[#7854F6] transition-colors"
                   >
                     Detalles
                   </Link>

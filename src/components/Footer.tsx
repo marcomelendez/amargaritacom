@@ -38,10 +38,10 @@ export default function Footer() {
     <footer>
       {/* TOP FOOTER — purple bg + illustration */}
       <div
-        className="relative text-white bg-[#7854F6]"
+        className="relative text-black bg-[#697EB0]"
         style={{ backgroundImage: "url('/footer-bg-img.png')", backgroundSize: 'cover', backgroundPosition: 'center bottom' }}
       >
-        <div className="absolute inset-0 bg-[#7854F6]/50" />
+        <div className="absolute inset-0 bg-[#697EB0]/30" />
         <div className="relative max-w-7xl mx-auto px-4">
           <NewsletterSection />
         </div>
@@ -50,11 +50,9 @@ export default function Footer() {
           {/* Col 1: logo + description + social icons */}
           <div>
             <div className="text-2xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-[#FE6604] via-[#FB9141] to-[#F59C0B] bg-clip-text text-transparent">a</span>
-              <span className="text-white">margarita</span>
-              <span className="text-white/70">.com</span>
+              <span className="text-[#FE6404]">amargarita.com</span>
             </div>
-            <p className="text-white/80 text-sm leading-relaxed mb-5">
+            <p className="text-black/80 text-sm leading-relaxed mb-5">
               Tu guía de viaje para descubrir lo mejor de Isla Margarita, Coche y Cubagua. Hoteles, paquetes y excursiones al mejor precio.
             </p>
             <div className="flex items-center gap-2">
@@ -75,11 +73,11 @@ export default function Footer() {
 
           {/* Col 2: Productos y servicios */}
           <div>
-            <h3 className="font-semibold text-white text-sm uppercase tracking-wide mb-4">Productos y servicios</h3>
+            <h3 className="font-semibold text-black text-sm uppercase tracking-wide mb-4">Productos y servicios</h3>
             <ul className="space-y-2">
               {productLinks.slice(0, 8).map((link) => (
                 <li key={link.label}>
-                  <Link href={link.href} className="text-white/80 text-sm hover:text-white transition-colors">
+                  <Link href={link.href} className="text-black/80 text-sm hover:text-black transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -89,22 +87,22 @@ export default function Footer() {
 
           {/* Col 3: Amargarita.com — address + contact */}
           <div>
-            <h3 className="font-semibold text-white text-sm uppercase tracking-wide mb-4">Amargarita.com</h3>
+            <h3 className="font-semibold text-black text-sm uppercase tracking-wide mb-4">Amargarita.com</h3>
             <div className="space-y-3">
-              <div className="flex items-start gap-2 text-sm text-white/80">
-                <MapPin size={14} className="mt-0.5 shrink-0 text-white/70" />
+              <div className="flex items-start gap-2 text-sm text-black/80">
+                <MapPin size={14} className="mt-0.5 shrink-0 text-black/60" />
                 <span>CC. Centro Comercial, Local 5, Porlamar, Isla Margarita</span>
               </div>
-              <a href="mailto:reservas@amargarita.com" className="flex items-center gap-2 text-sm text-white/80 hover:text-white transition-colors">
-                <Mail size={14} className="shrink-0 text-white/70" />
+              <a href="mailto:reservas@amargarita.com" className="flex items-center gap-2 text-sm text-black/80 hover:text-black transition-colors">
+                <Mail size={14} className="shrink-0 text-black/60" />
                 <span>reservas@amargarita.com</span>
               </a>
-              <a href="tel:+584248347321" className="flex items-center gap-2 text-sm text-white/80 hover:text-white transition-colors">
-                <Phone size={14} className="shrink-0 text-white/70" />
+              <a href="tel:+584248347321" className="flex items-center gap-2 text-sm text-black/80 hover:text-black transition-colors">
+                <Phone size={14} className="shrink-0 text-black/60" />
                 <span>+58 424 8347321</span>
               </a>
-              <a href="tel:+582952604093" className="flex items-center gap-2 text-sm text-white/80 hover:text-white transition-colors">
-                <Phone size={14} className="shrink-0 text-white/70" />
+              <a href="tel:+582952604093" className="flex items-center gap-2 text-sm text-black/80 hover:text-black transition-colors">
+                <Phone size={14} className="shrink-0 text-black/60" />
                 <span>+58 295 2604093</span>
               </a>
             </div>
@@ -119,7 +117,7 @@ export default function Footer() {
           {/* 3-column grid of small links */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1.5 text-xs mb-5">
             {allBottomLinks.map((link, i) => (
-              <Link key={`${link.label}-${i}`} href={link.href} className="hover:text-white transition-colors truncate">
+              <Link key={`${link.label}-${i}`} href={link.href} className="hover:text-black transition-colors truncate">
                 {link.label}
               </Link>
             ))}
