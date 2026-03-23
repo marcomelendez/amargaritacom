@@ -9,7 +9,7 @@ export default function MobileSearchForm() {
   const [passengers, setPassengers] = useState('')
 
   return (
-    <div className="md:hidden mx-4 -mt-2 mb-4">
+    <div className="md:hidden mx-4 -mt-4 mb-4">
       <div className="bg-white rounded-2xl shadow-md p-4">
         {/* Fecha Entrada */}
         <div className="flex items-center gap-3 border-b border-gray-200 py-3">

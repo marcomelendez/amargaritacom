@@ -1,12 +1,39 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ShoppingCart, Plane, Hotel, Car, Users } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ShoppingCart, Plane, Hotel, Car, Users } from 'lucide-react'
 import { packageService } from '@/services'
 import { resolveMediaUrl } from '@/config/env'
 import type { Package } from '@/types'
+
+const placeholderPackages = [
+  {
+    name: 'MARGARITA 360°',
+    badge: '5 días / 4 noches',
+    adults: 2,
+    details: ['✈️ Boletos aéreos Caracas-Porlamar', '🏝️ Full Day Isla de Cubagua + 2 noches Isla de Coche'],
+    price: 670,
+    image: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=600&q=80',
+  },
+  {
+    name: 'COCHE & CUBAGUA',
+    badge: '3 días / 2 noches',
+    adults: 2,
+    details: ['🚢 Traslado en lancha', '🏨 Hotel 4 estrellas incluido'],
+    price: 390,
+    image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80',
+  },
+  {
+    name: 'MARGARITA PREMIUM',
+    badge: '7 días / 6 noches',
+    adults: 2,
+    details: ['✈️ Vuelos incluidos', '🌟 Hotel 5 estrellas todo incluido'],
+    price: 1200,
+    image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&q=80',
+  },
+]
 
 const PLACEHOLDER_PACKAGES: Package[] = [
   {
@@ -54,6 +81,30 @@ export default function FeaturedPackages() {
     })
   }, [])
 
+  // ── Mobile carousel state ──────────────────────────────
+  const [currentPkg, setCurrentPkg] = useState(0)
+  const [isHoveredPkg, setIsHoveredPkg] = useState(false)
+  const pkgTrackRef = useRef<HTMLDivElement>(null)
+
+  const maxPkgIndex = placeholderPackages.length - 1
+
+  const prevPkg = () => setCurrentPkg(c => Math.max(0, c - 1))
+  const nextPkg = () => setCurrentPkg(c => Math.min(maxPkgIndex, c + 1))
+
+  useEffect(() => {
+    if (!pkgTrackRef.current) return
+    const cardWidth = pkgTrackRef.current.offsetWidth
+    pkgTrackRef.current.style.transform = `translateX(-${currentPkg * cardWidth}px)`
+  }, [currentPkg])
+
+  useEffect(() => {
+    if (isHoveredPkg) return
+    const timer = setInterval(() => {
+      setCurrentPkg(c => c >= maxPkgIndex ? 0 : c + 1)
+    }, 4000)
+    return () => clearInterval(timer)
+  }, [isHoveredPkg, maxPkgIndex])
+
   return (
     <>
     {/* ── MOBILE VERSION ─────────────────────────────────── */}
@@ -62,49 +113,81 @@ export default function FeaturedPackages() {
         Los Mejores Paquetes Turísticos Para Isla Margarita
       </h2>
 
-      {/* Package card */}
-      <div className="rounded-2xl shadow-md overflow-hidden mb-4">
-        {/* Image */}
-        <div className="relative aspect-video w-full">
-          <Image
-            src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=600&q=80"
-            alt="Margarita 360°"
-            fill
-            className="object-cover"
-            unoptimized
+      {/* Package carousel */}
+      <div
+        className="relative mb-4"
+        onMouseEnter={() => setIsHoveredPkg(true)}
+        onMouseLeave={() => setIsHoveredPkg(false)}
+        onTouchStart={() => setIsHoveredPkg(true)}
+        onTouchEnd={() => setIsHoveredPkg(false)}
+      >
+        {/* Track wrapper */}
+        <div className="overflow-hidden rounded-2xl">
+          <div
+            ref={pkgTrackRef}
+            className="flex transition-transform duration-300 ease-in-out"
+          >
+            {placeholderPackages.map((pkg, i) => (
+              <div key={i} className="flex-shrink-0 w-full">
+                {/* Card */}
+                <div className="rounded-2xl shadow-md overflow-hidden">
+                  {/* Image with badge */}
+                  <div className="relative">
+                    <Image src={pkg.image} alt={pkg.name} width={600} height={340} className="w-full aspect-video object-cover" unoptimized />
+                    <span className="absolute top-3 left-3 bg-gradient-to-r from-[#FE6604] to-[#F59C0B] text-white text-xs font-bold px-3 py-1 rounded-full">
+                      {pkg.badge}
+                    </span>
+                  </div>
+                  {/* Card body */}
+                  <div className="bg-white p-4">
+                    <p className="font-bold text-base text-gray-900">{pkg.name}</p>
+                    <p className="text-sm text-gray-600 flex items-center gap-1 mt-1">
+                      <Users className="w-4 h-4" /> {pkg.adults} Adultos
+                    </p>
+                    <ul className="mt-2 space-y-1">
+                      {pkg.details.map((d, j) => (
+                        <li key={j} className="text-xs text-gray-500">{d}</li>
+                      ))}
+                    </ul>
+                    <div className="flex items-center justify-between mt-3">
+                      <span className="text-[#FE6604] text-sm font-medium cursor-pointer">Ver detalles</span>
+                      <span className="font-semibold text-sm text-gray-800">Total 2 Adultos ${pkg.price}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Left arrow */}
+        <button
+          onClick={prevPkg}
+          disabled={currentPkg === 0}
+          className="absolute left-2 top-[40%] -translate-y-1/2 z-10 bg-white shadow-md rounded-full p-1.5 disabled:opacity-30"
+        >
+          <ChevronLeft className="w-4 h-4 text-gray-700" />
+        </button>
+
+        {/* Right arrow */}
+        <button
+          onClick={nextPkg}
+          disabled={currentPkg === maxPkgIndex}
+          className="absolute right-2 top-[40%] -translate-y-1/2 z-10 bg-white shadow-md rounded-full p-1.5 disabled:opacity-30"
+        >
+          <ChevronRight className="w-4 h-4 text-gray-700" />
+        </button>
+      </div>
+
+      {/* Dots */}
+      <div className="flex justify-center gap-2 mt-3 mb-4">
+        {placeholderPackages.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrentPkg(i)}
+            className={`w-2 h-2 rounded-full transition-colors ${i === currentPkg ? 'bg-[#7854F6]' : 'bg-gray-300'}`}
           />
-          {/* Duration badge */}
-          <div className="absolute top-3 left-3">
-            <span className="bg-gradient-to-r from-[#FE6604] via-[#FB9141] to-[#F59C0B] text-white text-xs font-bold px-3 py-1 rounded-full">
-              5 días / 4 noches
-            </span>
-          </div>
-        </div>
-
-        {/* Card body */}
-        <div className="bg-white p-4">
-          <h3 className="font-bold text-base text-gray-900 mb-2">MARGARITA 360°</h3>
-
-          <div className="flex items-center gap-1 text-sm text-gray-600 mb-2">
-            <Users className="w-4 h-4 text-gray-400" />
-            <span>2 Adultos</span>
-          </div>
-
-          <p className="text-xs text-gray-500 mb-1">
-            ✈️ Boletos aéreos Caracas-Porlamar
-          </p>
-          <p className="text-xs text-gray-500 mb-3">
-            🏝️ Full Day a la Isla de Cubagua + 2 noches en la Isla de Coche
-          </p>
-
-          <Link href="/paquetes" className="text-[#FE6604] text-sm font-medium block mb-2">
-            Ver detalles
-          </Link>
-
-          <p className="font-semibold text-sm text-gray-800">
-            Total a pagar para 2 Adultos $670
-          </p>
-        </div>
+        ))}
       </div>
 
       {/* CTA button */}
