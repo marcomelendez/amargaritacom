@@ -76,7 +76,7 @@ export default function Navbar() {
       </div>
 
       {/* Top bar — desktop version */}
-      <div className="hidden md:block bg-[#7854F6] text-white text-xs py-2 px-4">
+      <div className="hidden md:block bg-[#4a43c4] text-white text-xs py-2 px-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Left: social */}
           <div className="flex items-center gap-2">
@@ -128,21 +128,22 @@ export default function Navbar() {
           {/* Desktop nav items — gray pill/chip background */}
           <div className="hidden md:flex items-center gap-2">
             {[
-              { href: '/hoteles', label: 'Hoteles en Margarita' },
-              { href: '/paquetes', label: 'Paquetes' },
-              { href: '/excursiones', label: 'Explora Actividades' },
-              { href: '/ofertas', label: 'Ofertas' },
-            ].map((link) => (
+              { href: '/hoteles',     label: 'Hoteles en Margarita', icon: Building2 },
+              { href: '/paquetes',    label: 'Paquetes',             icon: Luggage   },
+              { href: '/excursiones', label: 'Explora Actividades',  icon: Compass   },
+              { href: '/ofertas',     label: 'Ofertas',              icon: Tag       },
+            ].map(({ href, label, icon: Icon }) => (
               <Link
-                key={link.href}
-                href={link.href}
-                className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
-                  pathname.startsWith(link.href)
-                    ? 'text-[#7854F6] bg-[#8BA4E6]/20'
+                key={href}
+                href={href}
+                className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-full transition-colors ${
+                  pathname.startsWith(href)
+                    ? 'text-[#4a43c4] bg-[#8BA4E6]/20'
                     : 'text-gray-700 bg-gray-100 hover:bg-gray-200 hover:text-gray-900'
                 }`}
               >
-                {link.label}
+                <Icon className="w-4 h-4 shrink-0" />
+                {label}
               </Link>
             ))}
           </div>

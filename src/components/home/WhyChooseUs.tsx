@@ -54,7 +54,7 @@ export default function WhyChooseUs() {
             >
               {/* Circular purple icon */}
               <div className="w-14 h-14 rounded-full bg-[#8BA4E6]/20 group-hover:bg-[#7854F6] flex items-center justify-center mb-4 transition-colors">
-                <Icon size={24} className="text-[#7854F6] group-hover:text-white transition-colors" />
+                <Icon size={24} className="text-[#4a43c4] group-hover:text-white transition-colors" />
               </div>
               <h3 className="font-semibold text-gray-800 mb-2">{title}</h3>
               <p className="text-gray-400 text-sm leading-relaxed">{description}</p>

@@ -23,7 +23,7 @@ export default function MobileBottomNav() {
             <Link
               key={label}
               href={href}
-              className={`flex flex-col items-center gap-0.5 ${isActive ? 'text-[#7854F6]' : 'text-gray-400'}`}
+              className={`flex flex-col items-center gap-0.5 ${isActive ? 'text-[#4a43c4]' : 'text-gray-400'}`}
             >
               <Icon className="w-6 h-6" />
               <span className="text-xs">{label}</span>

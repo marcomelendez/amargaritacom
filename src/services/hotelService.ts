@@ -1,15 +1,33 @@
 import { http, safeRequest } from '@/lib/api'
 import type { Hotel, PropertyResult, SearchCombinationsRequest } from '@/types'
 
-export const hotelService = {
-  getAll: () =>
-    safeRequest(() => http.get<Hotel[]>('/hotels', { revalidate: 300 }), []),
+// BFF fetch — calls Next.js API routes which merge Laravel + MongoDB
+async function bffGet<T>(path: string, fallback: T): Promise<T> {
+  try {
+    const res = await fetch(path, { cache: 'no-store' })
+    if (!res.ok) throw new Error(`BFF ${path} → ${res.status}`)
+    return (await res.json()) as T
+  } catch (err) {
+    console.error('[hotelService bffGet]', err)
+    return fallback
+  }
+}
 
-  getBySlug: (slug: string) =>
-    safeRequest(() => http.get<Hotel>(`/hotel/${slug}`, { revalidate: 300 }), null),
+export const hotelService = {
+  // Uses BFF → merges Laravel API + MongoDB short_description + highlights
+  getAll: () => bffGet<Hotel[]>('/api/hotels', []),
+
+  // Uses BFF → full detail with MongoDB description, faqs, seo, check_in/out
+  getBySlug: (slug: string) => bffGet<Hotel | null>(`/api/hotels/${slug}`, null),
 
   getFeatured: () =>
     safeRequest(() => http.get<Hotel[]>('/hotels/featured', { revalidate: 300 }), []),
+
+  getByIds: (ids: number[]) =>
+    safeRequest(
+      () => http.post<Hotel[]>('/hotels/by-ids', { ids }, { revalidate: 300, tags: ['hotels-featured'] }),
+      []
+    ),
 
   searchCombinations: async (params: SearchCombinationsRequest) => {
     const normalized = {

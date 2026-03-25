@@ -8,6 +8,12 @@ export const packageService = {
   getFeatured: () =>
     safeRequest(() => http.get<Package[]>('/packages/featured', { revalidate: 300 }), []),
 
+  getByIds: (ids: number[]) =>
+    safeRequest(
+      () => http.post<Package[]>('/packages/by-ids', { ids }, { revalidate: 300, tags: ['packages-featured'] }),
+      []
+    ),
+
   getBySlug: (slug: string) =>
     safeRequest(() => http.get<Package>(`/packages/${slug}`, { revalidate: 300 }), null),
 }

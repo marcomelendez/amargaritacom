@@ -8,7 +8,7 @@ export const env = {
 }
 
 export function resolveMediaUrl(path: string | null | undefined): string {
-  if (!path) return '/placeholder.jpg'
+  if (!path) return '/placeholder.svg'
   if (path.startsWith('http')) return path
   return `${env.mediaUrl}/${path.replace(/^\//, '')}`
 }

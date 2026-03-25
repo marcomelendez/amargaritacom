@@ -7,6 +7,7 @@ import { ChevronLeft, ChevronRight, ShoppingCart, Plane, Hotel, Car, Users } fro
 import { packageService } from '@/services'
 import { resolveMediaUrl } from '@/config/env'
 import type { Package } from '@/types'
+import featuredPackagesConfig from '@/data/featured-packages.json'
 
 const placeholderPackages = [
   {
@@ -76,8 +77,8 @@ export default function FeaturedPackages() {
   const [packages, setPackages] = useState<Package[]>(PLACEHOLDER_PACKAGES)
 
   useEffect(() => {
-    packageService.getFeatured().then((data) => {
-      if (data && data.length > 0) setPackages(data.slice(0, 3))
+    packageService.getByIds(featuredPackagesConfig.ids).then((data) => {
+      if (data && data.length > 0) setPackages(data)
     })
   }, [])
 
@@ -228,6 +229,7 @@ export default function FeaturedPackages() {
         <div className="flex-1 grid grid-cols-1 sm:grid-cols-3">
           {packages.map((pkg) => {
             const meta = PACKAGE_META[pkg.id] ?? { hotels: 'HOTEL', hasVuelo: true, hasTraslado: true }
+            const imageSrc = resolveMediaUrl(pkg.image_url)
             return (
               <Link
                 key={pkg.id}
@@ -237,9 +239,10 @@ export default function FeaturedPackages() {
                 {/* Full-height photo */}
                 <div className="relative h-64 sm:h-full min-h-[320px]">
                   <Image
-                    src={resolveMediaUrl(pkg.image_url)}
+                    src={imageSrc}
                     alt={pkg.name}
                     fill
+                    unoptimized
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&q=80'

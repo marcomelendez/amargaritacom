@@ -38,8 +38,6 @@ export default function HomePage() {
         <WhyChooseUs />
       </div>
 
-      <NewsletterSection />
-      <PaymentLogos />
     </>
   )
 }

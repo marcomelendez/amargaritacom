@@ -91,12 +91,12 @@ export default function NewsletterSection() {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Tu correo electrónico"
             required
-            className="flex-1 px-5 py-3 rounded-full border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/40 text-sm bg-white text-[#7854F6] placeholder:text-[#8C7DEB] shadow-sm"
+            className="flex-1 px-5 py-3 rounded-full border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/40 text-sm bg-white text-[#4a43c4] placeholder:text-[#8C7DEB] shadow-sm"
           />
           <button
             type="submit"
             disabled={status === 'loading'}
-            className="bg-white hover:bg-[#8BA4E6]/10 text-[#7854F6] font-semibold px-7 py-3 rounded-full transition-all hover:scale-105 disabled:opacity-60 whitespace-nowrap shadow-md"
+            className="bg-white hover:bg-[#8BA4E6]/10 text-[#4a43c4] font-semibold px-7 py-3 rounded-full transition-all hover:scale-105 disabled:opacity-60 whitespace-nowrap shadow-md"
           >
             {status === 'loading' ? 'Enviando...' : 'Registrarme'}
           </button>

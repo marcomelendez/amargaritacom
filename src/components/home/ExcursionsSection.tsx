@@ -87,9 +87,9 @@ export default function ExcursionsSection() {
         {/* Category icons — centered */}
         <div className="flex items-center justify-center gap-12 mb-10">
           {CATEGORIES.map(({ label, icon: Icon }) => (
-            <button key={label} className="flex flex-col items-center gap-2 text-gray-500 hover:text-[#7854F6] transition-colors group">
+            <button key={label} className="flex flex-col items-center gap-2 text-gray-500 hover:text-[#4a43c4] transition-colors group">
               <div className="w-14 h-14 rounded-full bg-gray-100 group-hover:bg-[#8BA4E6]/10 flex items-center justify-center transition-colors shadow-sm">
-                <Icon size={24} className="group-hover:text-[#7854F6] transition-colors" />
+                <Icon size={24} className="group-hover:text-[#4a43c4] transition-colors" />
               </div>
               <span className="text-xs font-medium">{label}</span>
             </button>
@@ -136,7 +136,7 @@ export default function ExcursionsSection() {
         <div className="flex justify-end mt-6">
           <Link
             href="/excursiones"
-            className="inline-flex items-center gap-1 text-[#7854F6] text-sm font-semibold hover:underline"
+            className="inline-flex items-center gap-1 text-[#4a43c4] text-sm font-semibold hover:underline"
           >
             Ver más actividades y que hacer en Isla Margarita →
           </Link>

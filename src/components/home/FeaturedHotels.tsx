@@ -7,6 +7,7 @@ import { MapPin, Star, Heart, ChevronLeft, ChevronRight, PawPrint } from 'lucide
 import { hotelService } from '@/services'
 import { resolveMediaUrl } from '@/config/env'
 import type { Hotel } from '@/types'
+import featuredHotelsConfig from '@/data/featured-hotels.json'
 
 const PLACEHOLDER_HOTELS: Hotel[] = [
   { id: 1, slug: 'margarita-village', name: 'MARGARITA VILLAGE', category: 'Todo Incluido', description: '', direction: 'Porlamar Calle Miragua', rating: 4, stars: 3, cover_photo: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&q=80', main_photo_lg: null, main_photo_md: null, main_photo_sm: null, latlng: null },
@@ -33,7 +34,7 @@ export default function FeaturedHotels() {
   const trackRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    hotelService.getFeatured().then((data) => {
+    hotelService.getByIds(featuredHotelsConfig.ids).then((data) => {
       if (data && data.length > 0) setHotels(data)
     })
   }, [])
@@ -79,13 +80,13 @@ export default function FeaturedHotels() {
       <div className="px-4 md:px-8 mb-6">
         <h2 className="font-bold text-lg md:text-2xl text-center mb-4">
           <span className="text-gray-800">TOP DE </span>
-          <span className="text-[#7854F6]">HOTELES DESTACADOS</span>
+          <span className="text-[#4a43c4]">HOTELES DESTACADOS</span>
           <span className="text-gray-800"> EN LA ISLA DE MARGARITA</span>
         </h2>
         <p className="hidden md:block text-gray-500 text-sm leading-relaxed max-w-3xl mx-auto text-center">
           En esta sección se encuentran los hoteles destacados en cuanta a ubicación, servicios y popularidad
           categorizados por nuestros{' '}
-          <strong className="text-[#7854F6]">#ViajerosAMargarita</strong>. Opciones populares entre viajeros como tú
+          <strong className="text-[#4a43c4]">#ViajerosAMargarita</strong>. Opciones populares entre viajeros como tú
         </p>
       </div>
 
@@ -149,22 +150,21 @@ export default function FeaturedHotels() {
                       <Heart className="w-5 h-5 text-white" />
                     </button>
 
-                    {/* Detalles button */}
-                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2">
-                      <Link
-                        href={`/hoteles/${hotel.slug}`}
-                        className="bg-[#7854F6] text-white text-sm font-semibold px-5 py-1.5 rounded-full whitespace-nowrap"
-                      >
-                        Detalles
-                      </Link>
-                    </div>
                   </div>
 
                   {/* Card info */}
                   <div className="pt-3 pb-4">
-                    <h3 className="font-bold text-gray-900 text-base uppercase mb-1">
-                      {hotel.name}
-                    </h3>
+                    <div className="flex items-start justify-between gap-2 mb-1">
+                      <h3 className="font-bold text-gray-900 text-base uppercase leading-tight">
+                        {hotel.name}
+                      </h3>
+                      <Link
+                        href={`/hoteles/${hotel.slug}`}
+                        className="shrink-0 bg-[#4a43c4] text-white text-sm font-semibold px-5 py-1.5 rounded-full whitespace-nowrap"
+                      >
+                        Detalles
+                      </Link>
+                    </div>
 
                     <div className="flex items-center gap-0.5 mb-2">
                       {Array.from({ length: 5 }).map((_, idx) => (
@@ -222,7 +222,7 @@ export default function FeaturedHotels() {
       <div className="text-center mt-8">
         <Link
           href="/hoteles"
-          className="inline-flex items-center gap-2 text-[#7854F6] font-semibold hover:underline"
+          className="inline-flex items-center gap-2 text-[#4a43c4] font-semibold hover:underline"
         >
           Ver todos los hoteles →
         </Link>

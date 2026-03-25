@@ -1,5 +1,32 @@
 import type { MediaItem, Review } from './common'
 
+// MongoDB document — content stored independently of the MySQL API
+export interface HotelContent {
+  hotel_id: number
+  slug: string
+  short_description?: string
+  description?: string
+  highlights?: string[]
+  amenities_list?: string[]           // e.g. ['wifi', 'pool', 'gym']
+  gallery?: Array<{ url: string; alt: string; order: number }>
+  check_in?: string                   // e.g. '15:00'
+  check_out?: string                  // e.g. '12:00'
+  faqs?: Array<{ q: string; a: string }>
+  seo?: {
+    title?: string
+    meta_description?: string
+    keywords?: string[]
+  }
+  updated_at?: string
+}
+
+export interface HotelPlan {
+  code: string
+  name: string
+  plan_id: number
+  slug: string
+}
+
 export interface Hotel {
   id: number
   slug: string
@@ -15,10 +42,18 @@ export interface Hotel {
   main_photo_sm: string | null
   rating: number
   stars: number
+  plans?: HotelPlan[]
   images?: { url: string; name: string }[]
   gallery?: { url: string; file_name: string; name: string }[]
   amenities?: { id: number; name: string; icon: string | null }[]
   rooms?: HotelRoom[]
+  // Enriched from MongoDB (BFF merge)
+  highlights?: string[]
+  amenities_list?: string[]
+  check_in?: string
+  check_out?: string
+  faqs?: Array<{ q: string; a: string }>
+  seo?: { title?: string; meta_description?: string; keywords?: string[] }
 }
 
 export interface HotelRoom {

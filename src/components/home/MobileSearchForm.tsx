@@ -13,7 +13,7 @@ export default function MobileSearchForm() {
       <div className="bg-white rounded-2xl shadow-md p-4">
         {/* Fecha Entrada */}
         <div className="flex items-center gap-3 border-b border-gray-200 py-3">
-          <CalendarDays className="w-5 h-5 text-[#7854F6] shrink-0" />
+          <CalendarDays className="w-5 h-5 text-[#4a43c4] shrink-0" />
           <input
             type="text"
             placeholder="Fecha Entrada"
@@ -27,7 +27,7 @@ export default function MobileSearchForm() {
 
         {/* Fecha Salida */}
         <div className="flex items-center gap-3 border-b border-gray-200 py-3">
-          <CalendarDays className="w-5 h-5 text-[#7854F6] shrink-0" />
+          <CalendarDays className="w-5 h-5 text-[#4a43c4] shrink-0" />
           <input
             type="text"
             placeholder="Fecha Salida"
@@ -41,7 +41,7 @@ export default function MobileSearchForm() {
 
         {/* Pasajeros */}
         <div className="flex items-center gap-3 border-b border-gray-200 py-3">
-          <Users className="w-5 h-5 text-[#7854F6] shrink-0" />
+          <Users className="w-5 h-5 text-[#4a43c4] shrink-0" />
           <select
             value={passengers}
             onChange={(e) => setPassengers(e.target.value)}
