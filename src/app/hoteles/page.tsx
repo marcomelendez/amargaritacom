@@ -1,12 +1,16 @@
 'use client'
 
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, Suspense } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { Building2, MapPin, Star, Search, X, SlidersHorizontal, ChevronDown, ChevronUp } from 'lucide-react'
 import { hotelService } from '@/services'
 import { resolveMediaUrl } from '@/config/env'
-import type { Hotel } from '@/types'
+import SearchFormHoteles from '@/components/SearchFormHoteles'
+import type { Hotel, PropertyResult } from '@/types'
+
+const MARGARITA_DESTINATION_ID = 3
 
 const VISIBLE_STEP = 12
 
@@ -99,7 +103,8 @@ function FilterSection({
   )
 }
 
-export default function HotelesPage() {
+function HotelesPageInner() {
+  const searchParams = useSearchParams()
   const [hotels, setHotels]         = useState<Hotel[]>([])
   const [loading, setLoading]       = useState(true)
   const [search, setSearch]         = useState('')
@@ -113,12 +118,46 @@ export default function HotelesPage() {
   // Mobile sidebar toggle
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
+  // Price search state
+  const [priceMap, setPriceMap]         = useState<Map<string, PropertyResult>>(new Map())
+  const [pricesLoading, setPricesLoading] = useState(false)
+
   useEffect(() => {
     hotelService.getAll().then((data) => {
       setHotels(data)
       setLoading(false)
     })
   }, [])
+
+  // Fetch prices when URL search params change
+  useEffect(() => {
+    const checkIn  = searchParams.get('check_in')
+    const checkOut = searchParams.get('check_out')
+    const roomsRaw = searchParams.get('rooms')
+
+    if (!checkIn || !checkOut) {
+      setPriceMap(new Map())
+      return
+    }
+
+    let rooms: Array<{ adults: number; children: number; children_ages: number[] }> = [
+      { adults: 2, children: 0, children_ages: [] },
+    ]
+    if (roomsRaw) {
+      try { rooms = JSON.parse(roomsRaw) } catch { /* ignore */ }
+    }
+
+    setPricesLoading(true)
+    hotelService.searchCombinations({
+      destination_id: MARGARITA_DESTINATION_ID,
+      check_in: checkIn,
+      check_out: checkOut,
+      rooms,
+    }).then(({ properties }) => {
+      setPriceMap(new Map(properties.map(p => [p.slug, p])))
+      setPricesLoading(false)
+    }).catch(() => setPricesLoading(false))
+  }, [searchParams])
 
   function toggle(arr: string[], setArr: (v: string[]) => void, val: string) {
     setArr(arr.includes(val) ? arr.filter(v => v !== val) : [...arr, val])
@@ -239,7 +278,7 @@ export default function HotelesPage() {
     <div className="min-h-screen bg-gray-50">
 
       {/* Hero */}
-      <div className="bg-[#4a43c4] pt-28 pb-10 px-4">
+      <div className="bg-[#4a43c4] pt-28 pb-16 px-4">
         <div className="max-w-7xl mx-auto">
           <p className="text-white/70 text-sm font-medium mb-1 uppercase tracking-wide">
             Isla de Margarita
@@ -247,9 +286,10 @@ export default function HotelesPage() {
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-1">
             Hoteles en Margarita
           </h1>
-          <p className="text-white/75 text-sm">
-            Encontrá el alojamiento ideal para tu viaje a la isla
+          <p className="text-white/75 text-sm mb-6">
+            Ingresá las fechas para ver precios y disponibilidad en tiempo real
           </p>
+          <SearchFormHoteles />
         </div>
       </div>
 
@@ -380,6 +420,15 @@ export default function HotelesPage() {
                     ? (hotel.cover_photo.startsWith('http') ? hotel.cover_photo : resolveMediaUrl(hotel.cover_photo))
                     : resolveMediaUrl(hotel.main_photo_lg)
                   const label = ratingLabel(hotel.rating)
+                  const priceResult = priceMap.get(hotel.slug)
+                  const cheapest = priceResult?.combinations?.length
+                    ? [...priceResult.combinations].sort((a, b) => a.total_price - b.total_price)[0]
+                    : null
+                  const searchQs = searchParams.toString()
+                  const detailUrl  = `/hoteles/${hotel.slug}${searchQs ? `?${searchQs}` : ''}`
+                  const reservarUrl = cheapest && searchQs
+                    ? `/hoteles/${hotel.slug}?${searchQs}&selected_plan_id=${cheapest.plan_id}&selected_plan_name=${encodeURIComponent(cheapest.plan_name ?? '')}&selected_price=${cheapest.total_price}&selected_formatted_price=${encodeURIComponent(cheapest.formatted_price)}`
+                    : detailUrl
 
                   return (
                     <article
@@ -428,17 +477,13 @@ export default function HotelesPage() {
                             </h2>
                           </Link>
 
-                          {hotel.direction && (
-                            <div className="flex items-center gap-1 text-xs text-gray-500 mb-2">
-                              <MapPin className="w-3.5 h-3.5 text-[#FE6604] shrink-0" />
-                              <span className="line-clamp-1">{hotel.direction}</span>
+                          {(hotel.direction || extractZone(hotel.direction ?? '')) && (
+                            <div className="flex items-center gap-1.5 text-sm text-gray-600 mb-2">
+                              <MapPin className="w-4 h-4 text-[#FE6604] shrink-0" />
+                              <span className="line-clamp-1 font-medium">
+                                {extractZone(hotel.direction ?? '') ?? hotel.direction}
+                              </span>
                             </div>
-                          )}
-
-                          {hotel.short_description && (
-                            <p className="text-sm text-gray-500 leading-relaxed line-clamp-2 mb-2">
-                              {hotel.short_description}
-                            </p>
                           )}
 
                           {hotel.highlights && hotel.highlights.length > 0 && (
@@ -451,28 +496,36 @@ export default function HotelesPage() {
                             </div>
                           )}
 
-                          {hotel.plans && hotel.plans.length > 0 && (
-                            <div className="flex flex-wrap gap-1.5">
-                              {hotel.plans.map(plan => (
-                                <span
-                                  key={plan.plan_id}
-                                  className="text-[11px] font-semibold bg-[#4a43c4]/10 text-[#4a43c4] border border-[#4a43c4]/20 px-2.5 py-0.5 rounded-full"
-                                >
-                                  {plan.name}
-                                </span>
-                              ))}
-                            </div>
-                          )}
+                          <div className="flex flex-wrap gap-1.5">
+                            {cheapest?.plan_name && (
+                              <span className="inline-flex items-center gap-1 text-[11px] font-semibold bg-green-50 text-green-700 border border-green-200 px-2 py-0.5 rounded-full">
+                                ✓ {cheapest.plan_name}
+                              </span>
+                            )}
+                            {priceResult?.combinations?.length ? (
+                              <span className="inline-flex items-center gap-1 text-[11px] font-semibold bg-[#4a43c4]/8 text-[#4a43c4] border border-[#4a43c4]/15 px-2 py-0.5 rounded-full">
+                                🏨 {priceResult.combinations.length} opción{priceResult.combinations.length !== 1 ? 'es' : ''}
+                              </span>
+                            ) : hotel.plans && hotel.plans.length > 0 ? hotel.plans.map(plan => (
+                              <span
+                                key={plan.plan_id}
+                                className="text-[11px] font-semibold bg-[#4a43c4]/10 text-[#4a43c4] border border-[#4a43c4]/20 px-2.5 py-0.5 rounded-full"
+                              >
+                                {plan.name}
+                              </span>
+                            )) : null}
+                          </div>
                         </div>
                       </div>
 
-                      {/* Right: rating + CTA */}
-                      <div className="sm:w-[160px] shrink-0 p-4 sm:p-5 flex flex-col items-end justify-between border-t sm:border-t-0 sm:border-l border-gray-100 bg-gray-50/60">
+                      {/* Right: rating + precio + CTA */}
+                      <div className="sm:w-[200px] shrink-0 p-4 sm:p-5 flex flex-col items-end justify-between border-t sm:border-t-0 sm:border-l border-gray-100 bg-[#F8FAFC] sm:bg-white">
+                        {/* Rating */}
                         {label && hotel.rating > 0 ? (
                           <div className="flex items-center gap-2 w-full sm:justify-end mb-3">
                             <div className="text-right">
-                              <p className="text-xs font-bold text-gray-700">{label}</p>
-                              <p className="text-[10px] text-gray-400">Puntuación</p>
+                              <p className="text-xs font-semibold text-[#4a43c4]">{label}</p>
+                              <p className="text-[11px] text-gray-400">Puntuación general</p>
                             </div>
                             <div className="w-10 h-10 bg-[#4a43c4] text-white rounded-xl rounded-br-none flex items-center justify-center font-bold text-sm shadow shrink-0">
                               {hotel.rating}
@@ -482,11 +535,48 @@ export default function HotelesPage() {
                           <div />
                         )}
 
-                        <Link href={`/hoteles/${hotel.slug}`} className="w-full mt-auto">
-                          <button className="w-full bg-gradient-to-r from-[#FE6604] via-[#FB9141] to-[#F59C0B] text-white font-bold py-2.5 px-4 rounded-xl text-sm shadow-md hover:opacity-90 hover:-translate-y-0.5 transition-all">
-                            Ver detalles
-                          </button>
-                        </Link>
+                        {/* Price + CTA */}
+                        {pricesLoading ? (
+                          <div className="w-full mt-auto text-right">
+                            <div className="flex items-center justify-end gap-1.5 mb-3">
+                              <div className="w-3 h-3 border-2 border-[#4a43c4]/30 border-t-[#4a43c4] rounded-full animate-spin" />
+                              <span className="text-[11px] text-gray-400">Consultando...</span>
+                            </div>
+                            <Link href={detailUrl} className="w-full">
+                              <button className="w-full bg-gray-100 hover:bg-[#4a43c4] hover:text-white text-[#4a43c4] font-bold py-2.5 px-4 rounded-xl text-sm transition-all border border-gray-200">
+                                Ver detalles
+                              </button>
+                            </Link>
+                          </div>
+                        ) : cheapest ? (
+                          <div className="w-full text-right mt-auto">
+                            <p className="text-xs text-gray-400 mb-0.5">Tarifa desde</p>
+                            <p className="text-2xl font-black text-[#4a43c4] leading-none">
+                              {cheapest.formatted_price}
+                            </p>
+                            <p className="text-[10px] text-green-600 font-semibold mt-0.5">✓ Confirmación inmediata</p>
+                            <Link href={reservarUrl}>
+                              <button className="mt-3 w-full bg-[#FE6604] hover:bg-[#e55a00] active:bg-[#cc5000] text-white font-bold py-2.5 px-4 rounded-xl text-sm transition-all shadow-md shadow-orange-200 hover:shadow-orange-300 hover:-translate-y-0.5">
+                                Reservar
+                              </button>
+                            </Link>
+                          </div>
+                        ) : priceMap.size > 0 ? (
+                          <div className="w-full mt-auto text-right">
+                            <p className="text-[11px] text-gray-400 mb-3">Sin disponibilidad para estas fechas</p>
+                            <Link href={detailUrl} className="w-full">
+                              <button className="w-full bg-gray-100 hover:bg-[#4a43c4] hover:text-white text-[#4a43c4] font-bold py-2.5 px-4 rounded-xl text-sm transition-all border border-gray-200">
+                                Ver detalles
+                              </button>
+                            </Link>
+                          </div>
+                        ) : (
+                          <Link href={detailUrl} className="w-full mt-auto">
+                            <button className="w-full bg-gradient-to-r from-[#FE6604] via-[#FB9141] to-[#F59C0B] text-white font-bold py-2.5 px-4 rounded-xl text-sm shadow-md hover:opacity-90 hover:-translate-y-0.5 transition-all">
+                              Ver detalles
+                            </button>
+                          </Link>
+                        )}
                       </div>
                     </article>
                   )
@@ -510,5 +600,13 @@ export default function HotelesPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function HotelesPage() {
+  return (
+    <Suspense fallback={null}>
+      <HotelesPageInner />
+    </Suspense>
   )
 }
