@@ -1,0 +1,43 @@
+name: Deploy Amargarita to DigitalOcean
+
+on:
+  push:
+    branches:
+      - main # O la rama que uses para producción
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: Production
+    
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Desplegar vía SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          # Esto es vital para evitar el cuelgue en la conexión inicial
+          fingerprint: "" 
+          script_stop: true
+          script: |
+            # Navegar a la carpeta del proyecto
+            cd /var/www/amargaritacom
+            
+            # Traer los últimos cambios
+            git pull origin main
+            
+            # Cargar NVM y usar la versión de Node del proyecto
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            
+            # Instalar dependencias y construir
+            npm install
+            npm run build
+            
+            # Reiniciar la aplicación en PM2
+            pm2 restart hotelesenmargarita || pm2 start npm --name "hotelesenmargarita" -- start

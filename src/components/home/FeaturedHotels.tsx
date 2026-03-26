@@ -159,7 +159,7 @@ export default function FeaturedHotels() {
                         {hotel.name}
                       </h3>
                       <Link
-                        href={`/hoteles/${hotel.slug}`}
+                        href={`/hotel/${hotel.slug}`}
                         className="shrink-0 bg-[#4a43c4] text-white text-sm font-semibold px-5 py-1.5 rounded-full whitespace-nowrap"
                       >
                         Detalles

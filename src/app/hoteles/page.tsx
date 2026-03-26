@@ -278,7 +278,7 @@ function HotelesPageInner() {
     <div className="min-h-screen bg-gray-50">
 
       {/* Hero */}
-      <div className="bg-[#4a43c4] pt-28 pb-16 px-4">
+      <div id="main-search-form" className="bg-[#4a43c4] pt-28 pb-16 px-4">
         <div className="max-w-7xl mx-auto">
           <p className="text-white/70 text-sm font-medium mb-1 uppercase tracking-wide">
             Isla de Margarita
@@ -425,9 +425,9 @@ function HotelesPageInner() {
                     ? [...priceResult.combinations].sort((a, b) => a.total_price - b.total_price)[0]
                     : null
                   const searchQs = searchParams.toString()
-                  const detailUrl  = `/hoteles/${hotel.slug}${searchQs ? `?${searchQs}` : ''}`
+                  const detailUrl  = `/hotel/${hotel.slug}${searchQs ? `?${searchQs}` : ''}`
                   const reservarUrl = cheapest && searchQs
-                    ? `/hoteles/${hotel.slug}?${searchQs}&selected_plan_id=${cheapest.plan_id}&selected_plan_name=${encodeURIComponent(cheapest.plan_name ?? '')}&selected_price=${cheapest.total_price}&selected_formatted_price=${encodeURIComponent(cheapest.formatted_price)}`
+                    ? `/hotel/${hotel.slug}?${searchQs}&selected_plan_id=${cheapest.plan_id}&selected_plan_name=${encodeURIComponent(cheapest.plan_name ?? '')}&selected_price=${cheapest.total_price}&selected_formatted_price=${encodeURIComponent(cheapest.formatted_price)}`
                     : detailUrl
 
                   return (
@@ -437,7 +437,7 @@ function HotelesPageInner() {
                     >
                       {/* Image */}
                       <Link
-                        href={`/hoteles/${hotel.slug}`}
+                        href={`/hotel/${hotel.slug}`}
                         className="sm:w-[240px] shrink-0 relative h-48 sm:h-auto overflow-hidden block"
                       >
                         <Image
@@ -471,7 +471,7 @@ function HotelesPageInner() {
                             </div>
                           )}
 
-                          <Link href={`/hoteles/${hotel.slug}`}>
+                          <Link href={`/hotel/${hotel.slug}`}>
                             <h2 className="text-lg font-bold text-gray-900 hover:text-[#4a43c4] transition-colors leading-tight mb-1.5">
                               {hotel.name}
                             </h2>
@@ -550,11 +550,18 @@ function HotelesPageInner() {
                           </div>
                         ) : cheapest ? (
                           <div className="w-full text-right mt-auto">
-                            <p className="text-xs text-gray-400 mb-0.5">Tarifa desde</p>
+                            <p className="text-[10px] uppercase font-bold tracking-widest text-gray-400 mb-1">Desde</p>
+                            <p className="text-xs text-red-500 line-through mb-0.5">
+                              $ {(cheapest.total_price * 1.15).toFixed(2)}
+                            </p>
                             <p className="text-2xl font-black text-[#4a43c4] leading-none">
                               {cheapest.formatted_price}
                             </p>
-                            <p className="text-[10px] text-green-600 font-semibold mt-0.5">✓ Confirmación inmediata</p>
+                            {priceResult?.pricing_mode === 'instant' ? (
+                              <p className="text-[10px] text-green-600 font-semibold mt-1">✓ Confirmación inmediata</p>
+                            ) : (
+                              <p className="text-[10px] text-orange-500 font-semibold mt-1">A confirmar disponibilidad</p>
+                            )}
                             <Link href={reservarUrl}>
                               <button className="mt-3 w-full bg-[#FE6604] hover:bg-[#e55a00] active:bg-[#cc5000] text-white font-bold py-2.5 px-4 rounded-xl text-sm transition-all shadow-md shadow-orange-200 hover:shadow-orange-300 hover:-translate-y-0.5">
                                 Reservar
@@ -571,11 +578,23 @@ function HotelesPageInner() {
                             </Link>
                           </div>
                         ) : (
-                          <Link href={detailUrl} className="w-full mt-auto">
-                            <button className="w-full bg-gradient-to-r from-[#FE6604] via-[#FB9141] to-[#F59C0B] text-white font-bold py-2.5 px-4 rounded-xl text-sm shadow-md hover:opacity-90 hover:-translate-y-0.5 transition-all">
-                              Ver detalles
+                          <div className="w-full text-right mt-auto">
+                            <p className="text-[10px] uppercase font-bold tracking-widest text-gray-400 mb-1">Desde</p>
+                            <p className="text-2xl font-black text-[#4a43c4] leading-none mb-3">
+                              $ {((hotel as any).base_price || 95.00).toFixed(2)}
+                            </p>
+                            <button 
+                              onClick={(e) => {
+                                e.preventDefault();
+                                document.getElementById('main-search-form')?.scrollIntoView({ behavior: 'smooth' });
+                                const dateInput = document.querySelector('.flatpickr-input, input[placeholder*=\"Entrada\"]') as HTMLElement;
+                                if (dateInput) setTimeout(() => dateInput.click(), 500);
+                              }}
+                              className="w-full bg-[#FE6604] hover:bg-[#e55a00] active:bg-[#cc5000] text-white font-bold py-2.5 px-4 rounded-xl text-sm transition-all shadow-md shadow-orange-200 hover:-translate-y-0.5"
+                            >
+                              Reservar
                             </button>
-                          </Link>
+                          </div>
                         )}
                       </div>
                     </article>

@@ -2,9 +2,13 @@ import { http, safeRequest } from '@/lib/api'
 import type { Hotel, PropertyResult, SearchCombinationsRequest } from '@/types'
 
 // BFF fetch — calls Next.js API routes which merge Laravel + MongoDB
+// Uses absolute URL on server-side (required for Next.js Server Components)
 async function bffGet<T>(path: string, fallback: T): Promise<T> {
   try {
-    const res = await fetch(path, { cache: 'no-store' })
+    const base = typeof window === 'undefined'
+      ? (process.env.NEXT_PUBLIC_APP_URL ?? `http://localhost:${process.env.PORT ?? 3000}`)
+      : ''
+    const res = await fetch(`${base}${path}`, { cache: 'no-store' })
     if (!res.ok) throw new Error(`BFF ${path} → ${res.status}`)
     return (await res.json()) as T
   } catch (err) {
