@@ -23,7 +23,7 @@ interface FormFieldsProps {
   showOccupancy: boolean
   rooms: Room[]
   checkOutRef: React.MutableRefObject<any>
-  occupancyRef: React.RefObject<HTMLDivElement>
+  occupancyRef: React.RefObject<HTMLDivElement | null>
   onCheckInChange: (date: Date) => void
   onCheckOutChange: (date: Date) => void
   onToggleOccupancy: () => void

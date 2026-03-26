@@ -42,6 +42,7 @@ export interface Hotel {
   main_photo_sm: string | null
   rating: number
   stars: number
+  base_price?: number
   plans?: HotelPlan[]
   images?: { url: string; name: string }[]
   gallery?: { url: string; file_name: string; name: string }[]
