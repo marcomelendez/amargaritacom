@@ -423,7 +423,7 @@ function SearchFormInner({ mode = 'auto' }: { mode?: 'auto' | 'always-fixed' }) 
 
       {/* Detail bar (always-fixed mode: relative block on mobile, fixed on desktop) */}
       {mode === 'always-fixed' && (
-        <div className="lg:fixed lg:top-[88px] xl:top-24 relative z-40 bg-white lg:shadow-lg lg:border-b lg:border-gray-200 transition-all">
+        <div className="lg:fixed lg:top-[88px] xl:top-24 lg:left-0 lg:right-0 lg:w-full relative z-40 bg-white lg:shadow-lg lg:border-b lg:border-gray-200 transition-all">
           {/* Mobile toggle */}
           <div className="lg:hidden">
              <button 

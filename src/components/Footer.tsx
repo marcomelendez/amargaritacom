@@ -77,7 +77,7 @@ export default function Footer() {
             <ul className="space-y-2">
               {productLinks.slice(0, 8).map((link) => (
                 <li key={link.label}>
-                  <Link href={link.href} className="text-black/80 text-sm hover:text-black transition-colors">
+                  <Link href={link.href} className="text-black/80 text-sm hover:text-white transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -93,15 +93,15 @@ export default function Footer() {
                 <MapPin size={14} className="mt-0.5 shrink-0 text-black/60" />
                 <span>CC. Centro Comercial, Local 5, Porlamar, Isla Margarita</span>
               </div>
-              <a href="mailto:reservas@amargarita.com" className="flex items-center gap-2 text-sm text-black/80 hover:text-black transition-colors">
+              <a href="mailto:reservas@amargarita.com" className="flex items-center gap-2 text-sm text-black/80 hover:text-white transition-colors">
                 <Mail size={14} className="shrink-0 text-black/60" />
                 <span>reservas@amargarita.com</span>
               </a>
-              <a href="tel:+584248347321" className="flex items-center gap-2 text-sm text-black/80 hover:text-black transition-colors">
+              <a href="tel:+584248347321" className="flex items-center gap-2 text-sm text-black/80 hover:text-white transition-colors">
                 <Phone size={14} className="shrink-0 text-black/60" />
                 <span>+58 424 8347321</span>
               </a>
-              <a href="tel:+582952604093" className="flex items-center gap-2 text-sm text-black/80 hover:text-black transition-colors">
+              <a href="tel:+582952604093" className="flex items-center gap-2 text-sm text-black/80 hover:text-white transition-colors">
                 <Phone size={14} className="shrink-0 text-black/60" />
                 <span>+58 295 2604093</span>
               </a>
@@ -117,7 +117,7 @@ export default function Footer() {
           {/* 3-column grid of small links */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1.5 text-xs mb-5">
             {allBottomLinks.map((link, i) => (
-              <Link key={`${link.label}-${i}`} href={link.href} className="hover:text-black transition-colors truncate">
+              <Link key={`${link.label}-${i}`} href={link.href} className="hover:text-white transition-colors truncate">
                 {link.label}
               </Link>
             ))}
