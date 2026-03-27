@@ -70,6 +70,9 @@ export default async function HotelDetailPage({ params, searchParams }: Props) {
   return (
     <div className="min-h-screen bg-gray-50">
 
+      {/* ── Buscador Fijo Superior ────────────────────────────────────────── */}
+      <SearchFormHoteles mode="always-fixed" />
+
       {/* ── Hero ──────────────────────────────────────────────────────────── */}
       <div className="relative h-[65vh] min-h-[440px] bg-gray-900">
         <Image
@@ -82,8 +85,8 @@ export default async function HotelDetailPage({ params, searchParams }: Props) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
         {/* Back */}
-        <div className="absolute top-0 left-0 right-0 pt-24 px-4">
-          <div className="max-w-6xl mx-auto">
+        <div className="absolute top-0 left-0 right-0 pt-24 px-4 z-10 pointer-events-none">
+          <div className="max-w-6xl mx-auto pointer-events-auto">
             <Link
               href={backHref}
               className="inline-flex items-center gap-1.5 text-white/80 hover:text-white text-sm font-medium transition-colors bg-white/10 hover:bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full"
@@ -126,9 +129,6 @@ export default async function HotelDetailPage({ params, searchParams }: Props) {
           </div>
         </div>
       </div>
-
-      {/* ── Buscador Fijo Superior ────────────────────────────────────────── */}
-      <SearchFormHoteles mode="always-fixed" />
 
       {/* ── Main grid ─────────────────────────────────────────────────────── */}
       <div className="max-w-6xl mx-auto px-4 py-4">

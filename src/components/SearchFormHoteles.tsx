@@ -50,35 +50,46 @@ function FormFields({
 }: FormFieldsProps) {
   return (
     <form onSubmit={onSubmit} className={compact
-      ? 'max-w-7xl mx-auto px-4 py-2 flex flex-col sm:flex-row gap-3 items-end'
-      : 'flex flex-col sm:flex-row gap-3 items-end'
+      ? 'max-w-7xl mx-auto px-4 py-4 lg:py-2 flex flex-col sm:flex-row gap-4 sm:gap-3 items-stretch sm:items-end'
+      : 'flex flex-col sm:flex-row gap-4 sm:gap-3 items-stretch sm:items-end'
     }>
 
-      {/* Fechas */}
-      <div className="flex-[1.4] min-w-0">
+      {/* Entrada */}
+      <div className="flex-1 min-w-0">
         {!compact && (
           <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">
-            Fechas
+            Entrada
           </label>
         )}
-        <div className={`flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 h-[42px] gap-2 transition ${locked ? 'opacity-70 cursor-default' : 'focus-within:ring-2 focus-within:ring-[#4a43c4]/30 focus-within:border-[#4a43c4]'}`}>
-          <Calendar className="w-4 h-4 text-[#4a43c4] shrink-0" />
+        <div className={`flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 h-[46px] sm:h-[42px] transition overflow-hidden ${locked ? 'opacity-70 cursor-default' : 'focus-within:ring-2 focus-within:ring-[#4a43c4]/30 focus-within:border-[#4a43c4]'}`}>
+          <Calendar className="w-4 h-4 text-[#4a43c4] shrink-0 mr-2" />
           <Flatpickr
             options={{ locale: Spanish, minDate: 'today', dateFormat: 'd/m/Y' }}
             value={checkIn ?? ''}
             onChange={([date]: Date[]) => onCheckInChange(date)}
             placeholder="Entrada"
-            className="bg-transparent border-none text-sm text-gray-700 placeholder-gray-400 w-full outline-none cursor-pointer"
+            className="bg-transparent border-none text-sm font-medium text-gray-700 placeholder-gray-400 w-full outline-none cursor-pointer h-full"
             disabled={locked}
           />
-          <span className="text-gray-300 shrink-0">→</span>
+        </div>
+      </div>
+
+      {/* Salida */}
+      <div className="flex-1 min-w-0">
+        {!compact && (
+          <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-1.5">
+            Salida
+          </label>
+        )}
+        <div className={`flex items-center bg-gray-50 border border-gray-200 rounded-xl px-3 h-[46px] sm:h-[42px] transition overflow-hidden ${locked ? 'opacity-70 cursor-default' : 'focus-within:ring-2 focus-within:ring-[#4a43c4]/30 focus-within:border-[#4a43c4]'}`}>
+          <Calendar className="w-4 h-4 text-[#4a43c4] shrink-0 mr-2" />
           <Flatpickr
             ref={checkOutRef}
             options={{ locale: Spanish, minDate: checkIn ?? 'today', dateFormat: 'd/m/Y' }}
             value={checkOut ?? ''}
             onChange={([date]: Date[]) => onCheckOutChange(date)}
             placeholder="Salida"
-            className="bg-transparent border-none text-sm text-gray-700 placeholder-gray-400 w-full outline-none cursor-pointer"
+            className="bg-transparent border-none text-sm font-medium text-gray-700 placeholder-gray-400 w-full outline-none cursor-pointer h-full"
             disabled={locked}
           />
         </div>
@@ -94,11 +105,13 @@ function FormFields({
         <button
           type="button"
           onClick={locked ? undefined : onToggleOccupancy}
-          className={`w-full flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl h-[42px] px-3 text-sm text-gray-700 transition ${locked ? 'opacity-70 cursor-default' : 'hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#4a43c4]/30 focus:border-[#4a43c4]'}`}
+          className={`w-full flex items-center justify-between gap-2 bg-gray-50 border border-gray-200 rounded-xl h-[46px] sm:h-[42px] px-4 sm:px-3 text-sm font-medium text-gray-700 transition ${locked ? 'opacity-70 cursor-default' : 'hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#4a43c4]/30 focus:border-[#4a43c4]'}`}
         >
-          <Users className="w-4 h-4 text-[#4a43c4] shrink-0" />
-          <span className="flex-1 text-left">{guestLabel}</span>
-          <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${showOccupancy ? 'rotate-180' : ''}`} />
+          <div className="flex items-center gap-2 flex-1">
+            <Users className="w-4 h-4 text-[#4a43c4] shrink-0" />
+            <span className="text-left">{guestLabel}</span>
+          </div>
+          <ChevronDown className={`w-4 h-4 text-gray-400 shrink-0 transition-transform ${showOccupancy ? 'rotate-180' : ''}`} />
         </button>
 
         {showOccupancy && !locked && (
@@ -194,16 +207,16 @@ function FormFields({
       {/* Buscar / Modificar */}
       {locked ? (
         <button type="submit"
-          className="shrink-0 flex items-center gap-2 bg-white hover:bg-gray-50 text-[#4a43c4] border border-[#4a43c4]/30 font-bold py-2.5 px-6 rounded-xl transition-all whitespace-nowrap"
+          className="shrink-0 flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-[#4a43c4] border border-[#4a43c4]/30 font-bold h-[46px] sm:h-[42px] px-6 rounded-xl transition-all whitespace-nowrap w-full sm:w-auto mt-2 sm:mt-0"
         >
           <Pencil className="w-4 h-4" />
           Modificar
         </button>
       ) : (
         <button type="submit" disabled={!checkIn || !checkOut}
-          className="shrink-0 flex items-center gap-2 bg-gradient-to-r from-[#FE6604] to-[#F59C0B] hover:from-[#e55a00] hover:to-[#d98a00] disabled:opacity-50 text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-sm whitespace-nowrap"
+          className="shrink-0 flex items-center justify-center gap-2 bg-gradient-to-r from-[#FE6604] to-[#F59C0B] hover:from-[#e55a00] hover:to-[#d98a00] disabled:opacity-50 text-white font-bold h-[46px] sm:h-[42px] px-6 rounded-xl transition-all shadow-sm whitespace-nowrap w-full sm:w-auto mt-2 sm:mt-0"
         >
-          <Search className="w-4 h-4" />
+          <Search className="w-4 h-4 shrink-0" />
           Buscar
         </button>
       )}
@@ -224,6 +237,7 @@ function SearchFormInner({ mode = 'auto' }: { mode?: 'auto' | 'always-fixed' }) 
   const [showOccupancy, setShowOccupancy]   = useState(false)
   const [locked, setLocked]                 = useState(false)
   const [showFixed, setShowFixed]           = useState(false)
+  const [mobileExpanded, setMobileExpanded] = useState(false)
 
   // Two separate checkOut refs — one per form instance
   const checkOutRef      = useRef<any>(null)
@@ -394,8 +408,8 @@ function SearchFormInner({ mode = 'auto' }: { mode?: 'auto' | 'always-fixed' }) 
       {/* Sentinel — when this goes out of view, fixed bar appears */}
       {mode !== 'always-fixed' && <div ref={sentinelRef} className="h-px" />}
 
-      {/* Fixed bar */}
-      {(showFixed || mode === 'always-fixed') && (
+      {/* Fixed bar (auto mode) */}
+      {showFixed && mode !== 'always-fixed' && (
         <div className="fixed top-[88px] lg:top-24 left-0 right-0 z-40 bg-white shadow-lg border-b border-gray-200 transition-all">
           <FormFields
             {...sharedProps}
@@ -404,6 +418,37 @@ function SearchFormInner({ mode = 'auto' }: { mode?: 'auto' | 'always-fixed' }) 
             onCheckInChange={(date: Date) => handleCheckInChange(date, checkOutRefFixed)}
             compact
           />
+        </div>
+      )}
+
+      {/* Detail bar (always-fixed mode: relative block on mobile, fixed on desktop) */}
+      {mode === 'always-fixed' && (
+        <div className="lg:fixed lg:top-[88px] xl:top-24 relative z-40 bg-white lg:shadow-lg lg:border-b lg:border-gray-200 transition-all">
+          {/* Mobile toggle */}
+          <div className="lg:hidden">
+             <button 
+                type="button" 
+                onClick={() => setMobileExpanded(!mobileExpanded)}
+                className="w-full flex items-center justify-center gap-2 bg-gray-50 border-b border-gray-200 text-[#4a43c4] font-bold py-4 px-4 transition-colors relative z-10"
+             >
+                <Search className="w-4 h-4" />
+                <span className="text-sm">Modificar búsqueda</span>
+                <ChevronDown className={`w-4 h-4 ml-1 transition-transform ${mobileExpanded ? 'rotate-180' : ''}`} />
+             </button>
+          </div>
+          
+          {/* Form / Accordion Body */}
+          <div className={`${mobileExpanded ? 'block' : 'hidden'} lg:block pb-5 lg:pb-0 bg-white shadow-sm lg:shadow-none border-b border-gray-100 lg:border-none`}>
+             <div className="bg-white lg:bg-transparent lg:shadow-none p-2 lg:p-0 w-full">
+               <FormFields
+                  {...sharedProps}
+                  checkOutRef={checkOutRefFixed}
+                  occupancyRef={occupancyRefFixed}
+                  onCheckInChange={(date: Date) => handleCheckInChange(date, checkOutRefFixed)}
+                  compact
+               />
+             </div>
+          </div>
         </div>
       )}
     </>

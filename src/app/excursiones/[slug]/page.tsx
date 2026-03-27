@@ -27,13 +27,16 @@ export default async function ExcursionDetailPage({ params }: { params: Promise<
   return (
     <div className="min-h-screen bg-gray-50">
 
+      {/* Buscador Fijo */}
+      <SearchFormHoteles mode="always-fixed" />
+
       {/* ── Hero ──────────────────────────────────────────────────────────── */}
       <div className="relative h-[65vh] min-h-[440px] bg-[#1B3C73]">
         <Image src={heroPhoto} alt={exc.name} fill className="object-cover opacity-70" priority />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
-        <div className="absolute top-0 left-0 right-0 pt-24 px-4">
-          <div className="max-w-6xl mx-auto">
+        <div className="absolute top-0 left-0 right-0 pt-24 px-4 z-10 pointer-events-none">
+          <div className="max-w-6xl mx-auto pointer-events-auto">
             <Link href="/excursiones" className="inline-flex items-center gap-1.5 text-white/80 hover:text-white text-sm font-medium transition-colors bg-white/10 hover:bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full">
               <ChevronLeft className="w-4 h-4" />
               Volver a Excursiones
@@ -58,9 +61,6 @@ export default async function ExcursionDetailPage({ params }: { params: Promise<
           </div>
         </div>
       </div>
-
-      {/* Buscador Fijo */}
-      <SearchFormHoteles mode="always-fixed" />
 
       {/* ── Main grid ─────────────────────────────────────────────────────── */}
       <div className="max-w-6xl mx-auto px-4 py-8">
