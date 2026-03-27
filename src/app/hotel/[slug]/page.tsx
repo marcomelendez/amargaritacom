@@ -7,6 +7,8 @@ import { hotelService } from '@/services'
 import { resolveMediaUrl } from '@/config/env'
 import ReservationWidget from './_components/ReservationWidget'
 import FaqAccordion from './_components/FaqAccordion'
+import RoomGrid from './_components/RoomGrid'
+import SearchFormHoteles from '@/components/SearchFormHoteles'
 
 type Props = {
   params: Promise<{ slug: string }>
@@ -125,8 +127,11 @@ export default async function HotelDetailPage({ params, searchParams }: Props) {
         </div>
       </div>
 
+      {/* ── Buscador Fijo Superior ────────────────────────────────────────── */}
+      <SearchFormHoteles mode="always-fixed" />
+
       {/* ── Main grid ─────────────────────────────────────────────────────── */}
-      <div className="max-w-6xl mx-auto px-4 py-10">
+      <div className="max-w-6xl mx-auto px-4 py-4">
         <div className="grid lg:grid-cols-3 gap-8 items-start">
 
           {/* Left — content ─────────────────────────────────────────────── */}
@@ -174,34 +179,8 @@ export default async function HotelDetailPage({ params, searchParams }: Props) {
               </section>
             )}
 
-            {/* Rooms */}
-            {hotel.rooms && hotel.rooms.length > 0 && (
-              <section className="bg-white rounded-2xl border border-gray-100 p-7">
-                <h2 className="text-lg font-bold text-gray-800 mb-4">Tipos de habitación</h2>
-                <div className="grid sm:grid-cols-2 gap-3">
-                  {hotel.rooms.map(room => (
-                    <div key={room.id} className="border border-gray-100 rounded-xl overflow-hidden bg-gray-50">
-                      {room.image && (
-                        <div className="relative h-36">
-                          <Image
-                            src={resolveMediaUrl(room.image)}
-                            alt={room.name}
-                            fill
-                            className="object-cover"
-                          />
-                        </div>
-                      )}
-                      <div className="px-4 py-3">
-                        <p className="text-sm font-semibold text-gray-800">{room.name}</p>
-                        <p className="text-xs text-gray-400 mt-0.5">
-                          Hasta {room.max_persons} persona{room.max_persons !== 1 ? 's' : ''}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
+            {/* Grid Detallado de Habitaciones y Combinaciones */}
+            <RoomGrid hotel={hotel} searchParams={sp} />
 
             {/* Check-in / Check-out */}
             {(hotel.check_in || hotel.check_out) && (

@@ -1,12 +1,13 @@
 'use client'
 
 import { useState, useRef, useEffect, Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import Flatpickr from 'react-flatpickr'
 import 'flatpickr/dist/themes/light.css'
 import { Spanish } from 'flatpickr/dist/l10n/es.js'
 import dayjs from 'dayjs'
 import { Calendar, Users, Search, ChevronDown, Pencil } from 'lucide-react'
+import { useSearchStore } from '@/store/useSearchStore'
 
 interface Room {
   id: number
@@ -210,9 +211,10 @@ function FormFields({
   )
 }
 
-function SearchFormInner() {
+function SearchFormInner({ mode = 'auto' }: { mode?: 'auto' | 'always-fixed' }) {
   const router       = useRouter()
   const searchParams = useSearchParams()
+  const pathname     = usePathname()
 
   const [checkIn, setCheckIn]   = useState<Date | null>(null)
   const [checkOut, setCheckOut] = useState<Date | null>(null)
@@ -230,16 +232,29 @@ function SearchFormInner() {
   const occupancyRefFixed = useRef<HTMLDivElement>(null)
   const sentinelRef       = useRef<HTMLDivElement>(null)
 
-  // Restore from URL + lock if all params present
+  const searchStore  = useSearchStore()
+  const [hydrated, setHydrated] = useState(false)
+
+  // Hydration safety
+  useEffect(() => { setHydrated(true) }, [])
+
+  // Restore from URL OR Store
   useEffect(() => {
-    const ci = searchParams.get('check_in')
-    const co = searchParams.get('check_out')
-    const rp = searchParams.get('rooms')
+    if (!hydrated) return
+
+    const ciUrl = searchParams.get('check_in')
+    const coUrl = searchParams.get('check_out')
+    const rpUrl = searchParams.get('rooms')
+
+    const ci = ciUrl || searchStore.checkIn
+    const co = coUrl || searchStore.checkOut
+
     if (ci) setCheckIn(dayjs(ci, 'YYYY-MM-DD').toDate())
     if (co) setCheckOut(dayjs(co, 'YYYY-MM-DD').toDate())
-    if (rp) {
+
+    if (rpUrl) {
       try {
-        const parsed: Array<{ adults?: number; children?: number; children_ages?: number[] }> = JSON.parse(rp)
+        const parsed: Array<{ adults?: number; children?: number; children_ages?: number[] }> = JSON.parse(rpUrl)
         setRooms(parsed.map((r, i) => ({
           id: i + 1,
           adults: r.adults ?? 2,
@@ -247,9 +262,12 @@ function SearchFormInner() {
           childrenAges: r.children_ages ?? [],
         })))
       } catch { /* ignore */ }
+    } else if (searchStore.rooms && searchStore.rooms.length > 0) {
+      setRooms(searchStore.rooms.map((r, i) => ({ ...r, id: i + 1 })))
     }
-    if (ci && co && rp) setLocked(true)
-  }, [searchParams])
+
+    if (ci && co) setLocked(true)
+  }, [searchParams, hydrated, searchStore.checkIn, searchStore.checkOut, searchStore.rooms])
 
   // IntersectionObserver — show fixed bar when hero form scrolls out of view
   useEffect(() => {
@@ -315,15 +333,30 @@ function SearchFormInner() {
     e.preventDefault()
     if (locked) { setLocked(false); return }
     if (!checkIn || !checkOut) return
+    const ciStr = dayjs(checkIn).format('YYYY-MM-DD')
+    const coStr = dayjs(checkOut).format('YYYY-MM-DD')
+    const roomsData = rooms.map(r => ({
+      adults: r.adults,
+      children: r.children,
+      childrenAges: r.childrenAges,
+    }))
+    
+    // Save to global state
+    searchStore.setSearch(ciStr, coStr, roomsData)
+
     const params = new URLSearchParams()
-    params.set('check_in',  dayjs(checkIn).format('YYYY-MM-DD'))
-    params.set('check_out', dayjs(checkOut).format('YYYY-MM-DD'))
-    params.set('rooms', JSON.stringify(rooms.map(r => ({
+    params.set('check_in', ciStr)
+    params.set('check_out', coStr)
+    params.set('rooms', JSON.stringify(roomsData.map(r => ({
       adults: r.adults,
       children: r.children,
       children_ages: r.childrenAges,
     }))))
-    router.push(`/hoteles?${params.toString()}`)
+    if (pathname.startsWith('/hotel/')) {
+      router.push(`${pathname}?${params.toString()}`)
+    } else {
+      router.push(`/hoteles?${params.toString()}`)
+    }
     setLocked(true)
   }
 
@@ -348,20 +381,22 @@ function SearchFormInner() {
   return (
     <>
       {/* Hero inline form */}
-      <div className="bg-white rounded-2xl shadow-lg border border-white/20 p-4">
-        <FormFields
-          {...sharedProps}
-          checkOutRef={checkOutRef}
-          occupancyRef={occupancyRef}
-        />
-      </div>
+      {mode !== 'always-fixed' && (
+        <div className="bg-white rounded-2xl shadow-lg border border-white/20 p-4">
+          <FormFields
+            {...sharedProps}
+            checkOutRef={checkOutRef}
+            occupancyRef={occupancyRef}
+          />
+        </div>
+      )}
 
       {/* Sentinel — when this goes out of view, fixed bar appears */}
-      <div ref={sentinelRef} className="h-px" />
+      {mode !== 'always-fixed' && <div ref={sentinelRef} className="h-px" />}
 
       {/* Fixed bar */}
-      {showFixed && (
-        <div className="fixed top-24 left-0 right-0 z-40 bg-white shadow-lg border-b border-gray-200 transition-all">
+      {(showFixed || mode === 'always-fixed') && (
+        <div className="fixed top-[88px] lg:top-24 left-0 right-0 z-40 bg-white shadow-lg border-b border-gray-200 transition-all">
           <FormFields
             {...sharedProps}
             checkOutRef={checkOutRefFixed}
@@ -375,10 +410,10 @@ function SearchFormInner() {
   )
 }
 
-export default function SearchFormHoteles() {
+export default function SearchFormHoteles({ mode = 'auto' }: { mode?: 'auto' | 'always-fixed' }) {
   return (
     <Suspense fallback={null}>
-      <SearchFormInner />
+      <SearchFormInner mode={mode} />
     </Suspense>
   )
 }

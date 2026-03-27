@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Loader2, Tag, Check, AlertCircle, MessageCircle } from 'lucide-react'
 import { hotelService } from '@/services'
+import { useSearchStore } from '@/store/useSearchStore'
 import type { Hotel, Combination } from '@/types'
 
 interface Props {
@@ -12,7 +13,17 @@ interface Props {
 }
 
 export default function ReservationWidget({ hotel, searchParams }: Props) {
-  const { check_in, check_out, rooms } = searchParams
+  const searchStore = useSearchStore()
+  const [hydrated, setHydrated] = useState(false)
+
+  useEffect(() => { setHydrated(true) }, [])
+
+  const check_in = searchParams.check_in || (hydrated ? searchStore.checkIn : '')
+  const check_out = searchParams.check_out || (hydrated ? searchStore.checkOut : '')
+  const rooms = searchParams.rooms || (hydrated && searchStore.rooms.length > 0 ? JSON.stringify(searchStore.rooms.map(r => ({
+    adults: r.adults, children: r.children, children_ages: r.childrenAges
+  }))) : '')
+
   const hasSearch = !!(check_in && check_out && rooms)
 
   const [combinations, setCombinations] = useState<Combination[]>([])
@@ -22,6 +33,7 @@ export default function ReservationWidget({ hotel, searchParams }: Props) {
 
   useEffect(() => {
     if (!hasSearch) return
+    if (!hydrated && !searchParams.check_in) return // wait for hydration only if we rely on store
     let cancelled = false
     setLoading(true)
 
@@ -49,7 +61,7 @@ export default function ReservationWidget({ hotel, searchParams }: Props) {
     })
 
     return () => { cancelled = true }
-  }, [check_in, check_out, rooms, hotel.slug, hasSearch])
+  }, [check_in, check_out, rooms, hotel.slug, hasSearch, hydrated])
 
   /* ── No search yet: show plans + CTA ──────────────────────────────── */
   if (!hasSearch) {

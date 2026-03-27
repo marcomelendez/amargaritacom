@@ -19,7 +19,8 @@
     "next": "16.1.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-flatpickr": "^4.0.11"
+    "react-flatpickr": "^4.0.11",
+    "zustand": "^5.0.12"
   },
   "devDependencies": {
     "@types/node": "^20",

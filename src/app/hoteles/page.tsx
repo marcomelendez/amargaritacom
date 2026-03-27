@@ -8,6 +8,7 @@ import { Building2, MapPin, Star, Search, X, SlidersHorizontal, ChevronDown, Che
 import { hotelService } from '@/services'
 import { resolveMediaUrl } from '@/config/env'
 import SearchFormHoteles from '@/components/SearchFormHoteles'
+import { useSearchStore } from '@/store/useSearchStore'
 import type { Hotel, PropertyResult } from '@/types'
 
 const MARGARITA_DESTINATION_ID = 3
@@ -122,6 +123,11 @@ function HotelesPageInner() {
   const [priceMap, setPriceMap]         = useState<Map<string, PropertyResult>>(new Map())
   const [pricesLoading, setPricesLoading] = useState(false)
 
+  const searchStore = useSearchStore()
+  const [hydrated, setHydrated] = useState(false)
+
+  useEffect(() => { setHydrated(true) }, [])
+
   useEffect(() => {
     hotelService.getAll().then((data) => {
       setHotels(data)
@@ -131,9 +137,21 @@ function HotelesPageInner() {
 
   // Fetch prices when URL search params change
   useEffect(() => {
-    const checkIn  = searchParams.get('check_in')
-    const checkOut = searchParams.get('check_out')
-    const roomsRaw = searchParams.get('rooms')
+    if (!hydrated) return
+
+    let checkIn  = searchParams.get('check_in')
+    let checkOut = searchParams.get('check_out')
+    let roomsRaw = searchParams.get('rooms')
+
+    if (!checkIn || !checkOut) {
+      checkIn = searchStore.checkIn
+      checkOut = searchStore.checkOut
+      if (searchStore.rooms && searchStore.rooms.length > 0) {
+        roomsRaw = JSON.stringify(searchStore.rooms.map(r => ({
+          adults: r.adults, children: r.children, children_ages: r.childrenAges
+        })))
+      }
+    }
 
     if (!checkIn || !checkOut) {
       setPriceMap(new Map())
@@ -157,7 +175,7 @@ function HotelesPageInner() {
       setPriceMap(new Map(properties.map(p => [p.slug, p])))
       setPricesLoading(false)
     }).catch(() => setPricesLoading(false))
-  }, [searchParams])
+  }, [searchParams, hydrated, searchStore.checkIn, searchStore.checkOut, searchStore.rooms])
 
   function toggle(arr: string[], setArr: (v: string[]) => void, val: string) {
     setArr(arr.includes(val) ? arr.filter(v => v !== val) : [...arr, val])
@@ -424,10 +442,21 @@ function HotelesPageInner() {
                   const cheapest = priceResult?.combinations?.length
                     ? [...priceResult.combinations].sort((a, b) => a.total_price - b.total_price)[0]
                     : null
-                  const searchQs = searchParams.toString()
-                  const detailUrl  = `/hotel/${hotel.slug}${searchQs ? `?${searchQs}` : ''}`
-                  const reservarUrl = cheapest && searchQs
-                    ? `/hotel/${hotel.slug}?${searchQs}&selected_plan_id=${cheapest.plan_id}&selected_plan_name=${encodeURIComponent(cheapest.plan_name ?? '')}&selected_price=${cheapest.total_price}&selected_formatted_price=${encodeURIComponent(cheapest.formatted_price)}`
+                    
+                  let activeCheckIn = searchParams.get('check_in') || searchStore.checkIn
+                  let activeCheckOut = searchParams.get('check_out') || searchStore.checkOut
+                  let activeRoomsRaw = searchParams.get('rooms') || (searchStore.rooms.length ? JSON.stringify(searchStore.rooms.map(r=>({adults:r.adults,children:r.children,children_ages:r.childrenAges}))) : null)
+              
+                  const searchQsParams = new URLSearchParams(searchParams.toString())
+                  if (!searchParams.has('check_in') && activeCheckIn) searchQsParams.set('check_in', activeCheckIn)
+                  if (!searchParams.has('check_out') && activeCheckOut) searchQsParams.set('check_out', activeCheckOut)
+                  if (!searchParams.has('rooms') && activeRoomsRaw) searchQsParams.set('rooms', activeRoomsRaw)
+              
+                  const qsString = searchQsParams.toString()
+
+                  const detailUrl  = `/hotel/${hotel.slug}${qsString ? `?${qsString}` : ''}`
+                  const reservarUrl = cheapest && qsString
+                    ? `/hotel/${hotel.slug}?${qsString}&selected_plan_id=${cheapest.plan_id}&selected_plan_name=${encodeURIComponent(cheapest.plan_name ?? '')}&selected_price=${cheapest.total_price}&selected_formatted_price=${encodeURIComponent(cheapest.formatted_price)}`
                     : detailUrl
 
                   return (
