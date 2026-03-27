@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Calendar, Users, ChevronRight, X, CheckCircle2, Loader2, Info } from 'lucide-react'
+import { submitCatalogReservation } from '@/app/actions/reservation'
 
 interface Props {
   title: string
@@ -31,12 +32,25 @@ export default function CatalogReservationWidget({ title, price, type, itemId, s
     e.preventDefault()
     setLoading(true)
 
-    // Simulate backend delay (Server Action mock via Timeout)
-    setTimeout(() => {
-      const locator = `AMRG-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
-      setSuccessId(locator)
-      setLoading(false)
-    }, 1500)
+    const result = await submitCatalogReservation({
+      title,
+      type,
+      price,
+      date,
+      adults,
+      children,
+      name,
+      email,
+      phone
+    })
+
+    if (result.success && result.locator) {
+      setSuccessId(result.locator)
+    } else {
+      alert(result.message || 'Error inesperado al intentar reservar')
+    }
+    
+    setLoading(false)
   }
 
   return (
