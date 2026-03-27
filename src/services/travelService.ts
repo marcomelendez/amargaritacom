@@ -24,6 +24,10 @@ export const packageService = {
   getFeatured: async () => {
     const all = await bffGet<Package[]>('/api/packages', [])
     return all.filter(p => p.recommended)
+  },
+  getBySlug: async (slug: string) => {
+    const all = await bffGet<Package[]>('/api/packages', [])
+    return all.find(p => p.slug === slug)
   }
 }
 
@@ -32,6 +36,10 @@ export const excursionService = {
   getFeatured: async () => {
     const all = await bffGet<Excursion[]>('/api/excursiones', [])
     return all.slice(0, 9)
+  },
+  getBySlug: async (slug: string) => {
+    const all = await bffGet<Excursion[]>('/api/excursiones', [])
+    return all.find(e => e.slug === slug)
   }
 }
 
