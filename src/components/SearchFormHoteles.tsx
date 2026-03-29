@@ -224,7 +224,7 @@ function FormFields({
   )
 }
 
-function SearchFormInner({ mode = 'auto' }: { mode?: 'auto' | 'always-fixed' }) {
+function SearchFormInner({ mode = 'auto' }: { mode?: 'auto' | 'always-fixed' | 'listing' }) {
   const router       = useRouter()
   const searchParams = useSearchParams()
   const pathname     = usePathname()
@@ -394,23 +394,27 @@ function SearchFormInner({ mode = 'auto' }: { mode?: 'auto' | 'always-fixed' }) 
 
   return (
     <>
-      {/* Hero inline form */}
+      {/* ── Hero inline form (auto mode: all screens, listing mode: desktop only) ── */}
       {mode !== 'always-fixed' && (
-        <div className="bg-white rounded-2xl shadow-lg border border-white/20 p-4">
-          <FormFields
-            {...sharedProps}
-            checkOutRef={checkOutRef}
-            occupancyRef={occupancyRef}
-          />
+        <div className={mode === 'listing' ? 'hidden md:block' : ''}>
+          <div className="bg-white rounded-2xl shadow-lg border border-white/20 p-4">
+            <FormFields
+              {...sharedProps}
+              checkOutRef={checkOutRef}
+              occupancyRef={occupancyRef}
+            />
+          </div>
         </div>
       )}
 
-      {/* Sentinel — when this goes out of view, fixed bar appears */}
-      {mode !== 'always-fixed' && <div ref={sentinelRef} className="h-px" />}
+      {/* ── Sentinel (auto mode: all screens, listing mode: desktop only) ───────── */}
+      {mode !== 'always-fixed' && (
+        <div ref={sentinelRef} className={`h-px ${mode === 'listing' ? 'hidden md:block' : ''}`} />
+      )}
 
-      {/* Fixed bar (auto mode) */}
+      {/* ── Scroll-triggered fixed bar (auto + listing — desktop only for listing) ── */}
       {showFixed && mode !== 'always-fixed' && (
-        <div className="fixed top-[88px] lg:top-24 left-0 right-0 z-40 bg-white shadow-lg border-b border-gray-200 transition-all">
+        <div className={`fixed top-[88px] lg:top-24 left-0 right-0 z-40 bg-white shadow-lg border-b border-gray-200 transition-all ${mode === 'listing' ? 'hidden md:block' : ''}`}>
           <FormFields
             {...sharedProps}
             checkOutRef={checkOutRefFixed}
@@ -421,13 +425,43 @@ function SearchFormInner({ mode = 'auto' }: { mode?: 'auto' | 'always-fixed' }) 
         </div>
       )}
 
-      {/* Detail bar (always-fixed mode: relative block on mobile, fixed on desktop) */}
+      {/* ── Mobile search accordion (listing mode only, fixed at top) ─────────── */}
+      {mode === 'listing' && (
+        <div className="md:hidden fixed top-0 left-0 right-0 z-40 bg-white border-b border-gray-200 shadow-sm">
+          <button
+            type="button"
+            onClick={() => setMobileExpanded(o => !o)}
+            className="w-full flex items-center gap-3 px-4 py-3 text-[#4a43c4]"
+          >
+            <Search className="w-4 h-4 shrink-0" />
+            <span className="flex-1 text-left text-sm font-semibold">
+              {checkIn && checkOut
+                ? `${dayjs(checkIn).format('DD/MM')} → ${dayjs(checkOut).format('DD/MM')} · ${guestLabel}`
+                : 'Buscar hoteles'}
+            </span>
+            <ChevronDown className={`w-4 h-4 shrink-0 transition-transform ${mobileExpanded ? 'rotate-180' : ''}`} />
+          </button>
+          {mobileExpanded && (
+            <div className="px-3 pb-4 border-t border-gray-100 bg-white shadow-lg">
+              <FormFields
+                {...sharedProps}
+                checkOutRef={checkOutRefFixed}
+                occupancyRef={occupancyRefFixed}
+                onCheckInChange={(date: Date) => handleCheckInChange(date, checkOutRefFixed)}
+                compact
+              />
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Always-fixed bar (hotel detail page) ─────────────────────────────── */}
       {mode === 'always-fixed' && (
         <div className="lg:fixed lg:top-[88px] xl:top-24 lg:left-0 lg:right-0 lg:w-full relative z-40 bg-white lg:shadow-lg lg:border-b lg:border-gray-200 transition-all">
           {/* Mobile toggle */}
           <div className="lg:hidden">
-             <button 
-                type="button" 
+             <button
+                type="button"
                 onClick={() => setMobileExpanded(!mobileExpanded)}
                 className="w-full flex items-center justify-center gap-2 bg-gray-50 border-b border-gray-200 text-[#4a43c4] font-bold py-4 px-4 transition-colors relative z-10"
              >
@@ -436,8 +470,7 @@ function SearchFormInner({ mode = 'auto' }: { mode?: 'auto' | 'always-fixed' }) 
                 <ChevronDown className={`w-4 h-4 ml-1 transition-transform ${mobileExpanded ? 'rotate-180' : ''}`} />
              </button>
           </div>
-          
-          {/* Form / Accordion Body */}
+          {/* Accordion body */}
           <div className={`${mobileExpanded ? 'block' : 'hidden'} lg:block pb-5 lg:pb-0 bg-white shadow-sm lg:shadow-none border-b border-gray-100 lg:border-none`}>
              <div className="bg-white lg:bg-transparent lg:shadow-none p-2 lg:p-0 w-full">
                <FormFields
@@ -455,7 +488,7 @@ function SearchFormInner({ mode = 'auto' }: { mode?: 'auto' | 'always-fixed' }) 
   )
 }
 
-export default function SearchFormHoteles({ mode = 'auto' }: { mode?: 'auto' | 'always-fixed' }) {
+export default function SearchFormHoteles({ mode = 'auto' }: { mode?: 'auto' | 'always-fixed' | 'listing' }) {
   return (
     <Suspense fallback={null}>
       <SearchFormInner mode={mode} />

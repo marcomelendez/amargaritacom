@@ -12,18 +12,19 @@ const categories = [
 ]
 
 export default function MobileScrollNav() {
-  const [visible, setVisible] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
   const pathname = usePathname()
+  const isHome = pathname === '/'
 
   useEffect(() => {
-    const handleScroll = () => {
-      setVisible(window.scrollY > 80)
-    }
+    if (!isHome) return
+    const handleScroll = () => setScrolled(window.scrollY > 80)
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  }, [isHome])
 
-  if (!visible) return null
+  // En home: aparece al scrollear. En el resto: siempre visible.
+  if (isHome && !scrolled) return null
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white border-t border-gray-200 shadow-lg">

@@ -296,7 +296,7 @@ function HotelesPageInner() {
     <div className="min-h-screen bg-gray-50">
 
       {/* Hero */}
-      <div id="main-search-form" className="bg-[#4a43c4] pt-28 pb-16 px-4">
+      <div id="main-search-form" className="bg-[#4a43c4] pt-14 md:pt-28 pb-16 px-4">
         <div className="max-w-7xl mx-auto">
           <p className="text-white/70 text-sm font-medium mb-1 uppercase tracking-wide">
             Isla de Margarita
@@ -307,7 +307,7 @@ function HotelesPageInner() {
           <p className="text-white/75 text-sm mb-6">
             Ingresá las fechas para ver precios y disponibilidad en tiempo real
           </p>
-          <SearchFormHoteles />
+          <SearchFormHoteles mode="listing" />
         </div>
       </div>
 

@@ -10,6 +10,7 @@ import { env } from '@/config/env'
 export default function Navbar() {
   const pathname = usePathname()
   const [scrolled, setScrolled] = useState(false)
+  const hideMobileHeader = ['/hoteles', '/paquetes', '/excursiones', '/ofertas'].some(p => pathname.startsWith(p))
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10)
@@ -20,8 +21,8 @@ export default function Navbar() {
   return (
     <header className="md:fixed md:top-0 md:left-0 md:right-0 md:z-50 w-full">
 
-      {/* MOBILE HEADER - md:hidden */}
-      <div className="md:hidden">
+      {/* MOBILE HEADER - oculto en páginas de listado */}
+      <div className={hideMobileHeader ? 'hidden' : 'md:hidden'}>
         {/* Top bar: Hola */}
         <div className="flex items-center px-4 pt-7 pb-2 bg-white">
           <span className="font-bold text-gray-800 text-base">👋 ¡Hola!</span>
